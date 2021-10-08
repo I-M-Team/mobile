@@ -1,0 +1,11 @@
+{
+  "appName": "Core Spirit",
+  "ok": "Ok",
+  "no": "No",
+  "cancel": "Cancel",
+  "networkError": "Server unavailable, please check your internet connection",
+  "defaultSnackbarError": "Something went wrong! We will be grateful if you tell us what happened",
+  "notFound": "Item not found",
+  "loadingYourData": "Loading...",
+  "clear": "Clear"
+}

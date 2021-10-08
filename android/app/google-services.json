@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "244987395138",
+    "project_id": "im-team-5a2f1",
+    "storage_bucket": "im-team-5a2f1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:244987395138:android:3d4783617983ef735b01db",
+        "android_client_info": {
+          "package_name": "com.moretech.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "244987395138-k0bb5iqe1ukph3f7kf2efj739kg0s88u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7SrXrwD4FLck2AvsCYAeGuOVtTUpfQSU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "244987395138-k0bb5iqe1ukph3f7kf2efj739kg0s88u.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "244987395138-3knvrmcj7jci886vpcuenb54m9olt7i5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.moretech.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

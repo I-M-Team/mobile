@@ -8,7 +8,12 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseProvider {
   static final _auth = FirebaseAuth.instance;
-  static final _googleSignIn = GoogleSignIn(hostedDomain: "", clientId: "");
+  static final _googleSignIn = GoogleSignIn(
+    scopes: [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile",
+    ],
+  );
   static final _users = _collection('users');
   static final _questions = _collection('questions');
 
@@ -24,8 +29,7 @@ class FirebaseProvider {
   static CollectionReference<Map<String, dynamic>> _reactions(String path) =>
       _doc(path).collection('reactions');
 
-  Stream<bool> isAuthorized() =>
-      _auth.authStateChanges().map((it) => it != null);
+  Stream<bool> isAuthorized() => currentPerson().map((it) => it != null);
 
   Future<void> signInGoogle() async {
     printLog(() => 'Starting google sign in');
@@ -53,6 +57,7 @@ class FirebaseProvider {
         'users/${user.uid}',
         googleUser.displayName.orDefault(),
         googleUser.email,
+        googleUser.photoUrl.orDefault(),
       ));
     } else {
       throw AuthCanceled();

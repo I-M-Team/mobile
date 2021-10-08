@@ -40,19 +40,17 @@ class _AuthPageState extends ViewModelState<AuthViewModel, AuthPage> {
 
   Widget _buildSocialButton(
       {required Widget icon, required String title, void onTap()?}) {
-    return Padding(
+    return Container(
+      width: double.infinity,
       padding: EdgeInsets.only(top: 20.0, left: 16, right: 16),
-      child: SizedBox(
-        width: double.infinity,
-        child: Observer(
-          builder: (context) => OutlinedButton.icon(
-            style: ElevatedButton.styleFrom(padding: EdgeInsets.all(14)),
-            onPressed: vm.loading.value ? null : onTap,
-            icon: icon,
-            label: Text(
-              title.orDefault(),
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-            ),
+      child: Observer(
+        builder: (context) => OutlinedButton.icon(
+          style: ElevatedButton.styleFrom(padding: EdgeInsets.all(14)),
+          onPressed: vm.loading.value ? null : onTap,
+          icon: icon,
+          label: Text(
+            title.orDefault(),
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
           ),
         ),
       ),

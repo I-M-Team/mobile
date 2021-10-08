@@ -8,5 +8,7 @@ class MainViewModel extends ViewModel {
 
   Future<bool> get isAuthorized => _repository.isAuthorized;
 
+  Stream<bool> get authorized => _repository.authorized;
+
   MainViewModel(this._repository);
 }

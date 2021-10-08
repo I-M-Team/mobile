@@ -9,9 +9,20 @@ import 'package:google_sign_in/google_sign_in.dart';
 class FirebaseProvider {
   static final _auth = FirebaseAuth.instance;
   static final _googleSignIn = GoogleSignIn(hostedDomain: "", clientId: "");
-  static final _firestore = FirebaseFirestore.instance;
-  static final _users = _firestore.collection('users');
-  static final _questions = _firestore.collection('questions');
+  static final _users = _collection('users');
+  static final _questions = _collection('questions');
+
+  static DocumentReference<Map<String, dynamic>> _doc(String path) =>
+      FirebaseFirestore.instance.doc(path);
+
+  static CollectionReference<Map<String, dynamic>> _collection(String path) =>
+      FirebaseFirestore.instance.collection(path);
+
+  static CollectionReference<Map<String, dynamic>> _answers(String path) =>
+      _doc(path).collection('answers');
+
+  static CollectionReference<Map<String, dynamic>> _reactions(String path) =>
+      _doc(path).collection('reactions');
 
   Stream<bool> isAuthorized() =>
       _auth.authStateChanges().map((it) => it != null);
@@ -39,7 +50,7 @@ class FirebaseProvider {
 
     if (user != null) {
       createPerson(Person(
-        user.uid,
+        'users/${user.uid}',
         googleUser.displayName.orDefault(),
         googleUser.email,
       ));
@@ -56,23 +67,45 @@ class FirebaseProvider {
   }
 
   void createPerson(Person person) {
-    _users.doc(person.id).set(person.toJson(), SetOptions(merge: true));
+    _doc(person.path).set(person.toJson(), SetOptions(merge: true));
   }
 
   Stream<Person?> currentPerson() {
     return _auth.authStateChanges().flatMapUntilNext(
           (event) => event == null
               ? Stream.value(null)
-              : _users
-                  .doc(event.uid)
-                  .snapshots()
-                  .map((json) => json.data()?.let((it) => Person.fromJson(it))),
+              : _users.doc(event.uid).snapshots().map((json) => json
+                  .takeIf((it) => it.exists)
+                  ?.let((it) => Person.fromSnapshot(it))),
         );
   }
 
   Stream<List<Question>> questions() {
-    return _questions.snapshots().map(
-        (event) => event.docs.mapToList((e) => Question.fromJson(e.data())));
+    return _questions
+        .snapshots()
+        .map((event) => event.docs.mapToList((e) => Question.fromSnapshot(e)));
+  }
+
+  Stream<List<Answer>> answers(Question item) {
+    return _answers(item.path)
+        .snapshots()
+        .map((event) => event.docs.mapToList((e) => Answer.fromSnapshot(e)));
+  }
+
+  Stream<List<Reaction>> reactions(Doc item) {
+    return _reactions(item.path)
+        .snapshots()
+        .map((event) => event.docs.mapToList((e) => Reaction.fromSnapshot(e)));
+  }
+
+  Stream<bool> isReactionAvailable(Personalized item) {
+    return _auth.authStateChanges().flatMapUntilNext((value) =>
+        _doc(item.personPath).id == value?.uid
+            ? Stream.value(false)
+            : _reactions(item.path)
+                .doc(value?.uid)
+                .snapshots()
+                .map((event) => !event.exists));
   }
 }
 

@@ -1,55 +1,84 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:app/extensions.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-part 'models.g.dart';
+class Doc {
+  final String path;
 
-@JsonSerializable()
-class Question {
-  @JsonKey(defaultValue: '')
-  final String id;
-  @JsonKey(defaultValue: '')
-  final String personId;
-  @JsonKey(defaultValue: '')
-  // should handle links on shares
-  final String content;
-
-  Question(this.id, this.personId, this.content);
-
-  factory Question.fromJson(Map<String, dynamic> json) =>
-      _$QuestionFromJson(json);
-
-  Map<String, dynamic> toJson() => _$QuestionToJson(this);
+  Doc(this.path);
 }
 
-@JsonSerializable()
-class Answer {
-  @JsonKey(defaultValue: '')
-  final String id;
-  @JsonKey(defaultValue: '')
-  final String personId;
-  @JsonKey(defaultValue: '')
+class Personalized extends Doc {
+  final String personPath;
+
+  Personalized(String path, this.personPath) : super(path);
+}
+
+class Question extends Personalized {
   // should handle links on shares
   final String content;
-  @JsonKey(defaultValue: false)
+
+  Question(String path, String personPath, this.content)
+      : super(path, personPath);
+
+  factory Question.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    var json = snapshot.data()!;
+    return Question(
+      snapshot.reference.path,
+      (json['person'] as DocumentReference?)?.path ?? '',
+      json['content'] as String? ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'person': FirebaseFirestore.instance.doc(personPath),
+        'content': content,
+        'created_at': Timestamp.now(),
+      };
+}
+
+class Answer extends Personalized {
+  final String personPath;
+  // should handle links on shares
+  final String content;
   final bool accepted;
 
-  Answer(this.id, this.personId, this.content, this.accepted);
+  Answer(String path, this.personPath, this.content, this.accepted)
+      : super(path, personPath);
 
-  factory Answer.fromJson(Map<String, dynamic> json) => _$AnswerFromJson(json);
+  factory Answer.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    var json = snapshot.data()!;
+    return Answer(
+      snapshot.reference.path,
+      (json['person'] as DocumentReference?)?.path ?? '',
+      json['content'] as String? ?? '',
+      json['accepted'] as bool? ?? false,
+    );
+  }
 
-  Map<String, dynamic> toJson() => _$AnswerToJson(this);
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'person': FirebaseFirestore.instance.doc(personPath),
+        'content': content,
+        'accepted': accepted,
+        'created_at': Timestamp.now(),
+      };
 }
 
-@JsonSerializable()
-class Reaction {
-  @JsonKey(defaultValue: '')
-  final String id;
-  @JsonKey(defaultValue: '')
-  final String personId;
+class Reaction extends Personalized {
+  Reaction({String? path, required String personPath})
+      : super(path.orDefault(), personPath);
 
-  Reaction(this.id, this.personId);
+  factory Reaction.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    var json = snapshot.data()!;
+    return Reaction(
+      path: snapshot.reference.path,
+      personPath: (json['person'] as DocumentReference?)?.path ?? '',
+    );
+  }
 
-  factory Reaction.fromJson(Map<String, dynamic> json) =>
-      _$ReactionFromJson(json);
-
-  Map<String, dynamic> toJson() => _$ReactionToJson(this);
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'person': FirebaseFirestore.instance.doc(personPath),
+        'created_at': Timestamp.now(),
+      };
 }

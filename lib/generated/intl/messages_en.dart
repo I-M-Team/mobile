@@ -26,6 +26,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "clear": MessageLookupByLibrary.simpleMessage("Clear"),
         "defaultSnackbarError": MessageLookupByLibrary.simpleMessage(
             "Something went wrong! We will be grateful if you tell us what happened"),
+        "googleAuth":
+            MessageLookupByLibrary.simpleMessage("Sign in with Google"),
         "loadingYourData": MessageLookupByLibrary.simpleMessage("Loading..."),
         "networkError": MessageLookupByLibrary.simpleMessage(
             "Server unavailable, please check your internet connection"),

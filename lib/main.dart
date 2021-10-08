@@ -1,6 +1,11 @@
+import 'dart:async';
+
+import 'package:app/extensions.dart';
 import 'package:app/src/resources/repository.dart';
+import 'package:app/src/ui/auth.dart';
 import 'package:app/src/ui/home.dart';
 import 'package:app/src/vm/vm.dart';
+import 'package:app/widgets.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -34,5 +39,23 @@ class App extends StatelessWidget {
       ),
       home: HomePage(),
     );
+  }
+}
+
+extension ContextExtension on BuildContext {
+  Future<T?> tryAuthorized<T>(
+    FutureOr<T?> authorized(),
+  ) async {
+    if (await this.read<MainViewModel>().isAuthorized) {
+      return authorized();
+    } else {
+      bool? signedIn =
+          await this.navigator.pushPage((context) => AuthPage.show());
+      if (signedIn == true) {
+        return authorized();
+      } else {
+        return null;
+      }
+    }
   }
 }

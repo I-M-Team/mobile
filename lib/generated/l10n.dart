@@ -130,6 +130,16 @@ class AppLocalizations {
     );
   }
 
+  /// `Sign in with Google`
+  String get googleAuth {
+    return Intl.message(
+      'Sign in with Google',
+      name: 'googleAuth',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Clear`
   String get clear {
     return Intl.message(

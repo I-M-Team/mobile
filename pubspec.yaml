@@ -37,6 +37,7 @@ dependencies:
 
   # utils
   rxdart: ^0.27.1
+  url_launcher: ^6.0.12
 
   # architecture
   mobx: ^2.0.1

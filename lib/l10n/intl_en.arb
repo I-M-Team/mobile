@@ -2,12 +2,12 @@
   "appName": "Core Spirit",
   "ok": "Ok",
   "no": "No",
-  "cancel": "Cancel",
+  "cancel": "Отмена",
   "networkError": "Server unavailable, please check your internet connection",
   "defaultSnackbarError": "Something went wrong! We will be grateful if you tell us what happened",
   "notFound": "Item not found",
   "loadingYourData": "Loading...",
-  "register": "Register",
-  "googleAuth": "Sign in with Google",
+  "register": "Регистрация",
+  "googleAuth": "Вход через Google",
   "clear": "Clear"
 }

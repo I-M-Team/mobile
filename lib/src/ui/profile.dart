@@ -1,3 +1,4 @@
+import 'package:app/design_system.dart';
 import 'package:app/extensions.dart';
 import 'package:app/src/resources/images.dart';
 import 'package:app/src/vm/profile_vm.dart';
@@ -5,6 +6,7 @@ import 'package:app/src/vm/vm.dart';
 import 'package:app/src/widgets/user_avatar.dart';
 import 'package:app/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage._({Key? key}) : super(key: key);
@@ -14,6 +16,8 @@ class ProfilePage extends StatefulWidget {
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
+
+const _url = 'https://play.google.com/store/apps/details?id=ru.vtb.invest';
 
 class _ProfilePageState extends ViewModelState<ProfileViewModel, ProfilePage> {
   Widget build(BuildContext context) {
@@ -63,7 +67,7 @@ class _ProfilePageState extends ViewModelState<ProfileViewModel, ProfilePage> {
                                             ?.copyWith(color: Colors.white),
                                       ),
                                       Text(
-                                        "Questions",
+                                        "Вопросов",
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ],
@@ -77,7 +81,7 @@ class _ProfilePageState extends ViewModelState<ProfileViewModel, ProfilePage> {
                                           ?.copyWith(color: Colors.white),
                                     ),
                                     Text(
-                                      "Answers",
+                                      "Ответов",
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ]),
@@ -105,6 +109,26 @@ class _ProfilePageState extends ViewModelState<ProfileViewModel, ProfilePage> {
                 style: context.theme.textTheme.bodyText1,
                 textAlign: TextAlign.center,
               ),
+              SizedBox(height: 64),
+              GestureDetector(
+                onTap: _launchURL,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      "Открыть брокерский счёт",
+                      style: context.theme.textTheme.headline6?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: VtbColors.blue70
+                      ),
+                    ),
+                    Container(
+                      height: 64,
+                      child: Image.asset("images/vtb_investor.png")
+                    )
+                  ]
+                ),
+              )
             ]),
           ),
           Spacer(),
@@ -116,7 +140,7 @@ class _ProfilePageState extends ViewModelState<ProfileViewModel, ProfilePage> {
               onPressed: () => vm.logout(),
               icon: Icon(Icons.logout),
               label: Text(
-                'Logout'.orDefault(),
+                'Выход'.orDefault(),
                 style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
               ),
             ),
@@ -125,4 +149,7 @@ class _ProfilePageState extends ViewModelState<ProfileViewModel, ProfilePage> {
       ),
     );
   }
+
+  void _launchURL() async =>
+      await canLaunch(_url) ? await launch(_url) : throw 'Could not launch $_url';
 }

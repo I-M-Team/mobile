@@ -82,7 +82,12 @@ class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
                             ? null
                             : IconButton(
                                 onPressed: () {
-                                  vm.reaction(item);
+                                  if (item.availability().value ==
+                                      Availability.available) {
+                                    vm.reaction(item);
+                                  } else {
+                                    vm.removeReaction(item);
+                                  }
                                 },
                                 icon: Icon(
                                   item.availability().value ==

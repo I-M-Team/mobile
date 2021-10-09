@@ -1,3 +1,4 @@
+import 'package:app/extensions.dart';
 import 'package:app/src/resources/local_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -24,25 +25,45 @@ class Person {
 
   Level getLevel() {
     List<String> personEvents = [];
-    var progress = eventsProgress;
-    for (var event in LocalProvider.events) {
-      if (progress[event.id] == event.conditions) {
-        personEvents.add(event.id);
+    for (var item in LocalProvider.events) {
+      if (isEventComplete(item)) {
+        personEvents.add(item.id);
       }
     }
 
-    Level personLevel = LocalProvider.levels.first;
+    var personLevel = LocalProvider.levels.first;
     for (var level in LocalProvider.levels.reversed) {
-      if (level.events == personEvents) {
-        personLevel = level;
+      if (level.events.every((element) => personEvents.contains(element))) {
+        return level;
       }
     }
 
     return personLevel;
   }
 
-  Level getNextLevel() {
-    return LocalProvider.levels[getLevel().number + 1];
+  Level? getNextLevel() {
+    return LocalProvider.levels.getOrNull(getLevel().number + 1);
+  }
+
+  bool isEventComplete(Event item) {
+    var progress = (eventsProgress[item.id] as int?).orDefault();
+    return progress >= item.conditions;
+  }
+
+  Event? getNextLevelEvent() {
+    List<String> personEvents = [];
+    for (var event in LocalProvider.events) {
+      if (isEventComplete(event)) {
+        personEvents.add(event.id);
+      }
+    }
+    var events = (getNextLevel()
+        ?.events
+        .filter((e) => !personEvents.contains(e))).orDefault();
+    print('getNextLevelEvent=$events');
+    return events.isEmpty
+        ? null
+        : LocalProvider.invisibleEvents.find((e) => events.contains(e.id));
   }
 
   factory Person.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot) {

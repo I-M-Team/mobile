@@ -37,9 +37,16 @@ class FirebaseProvider {
   String? get currentPersonPath =>
       currentPersonId?.let((it) => _users.doc(it).path);
 
+  Future<String> getPersonPath() async {
+    if (currentPersonPath == null) {
+      await signInAnon('', create: false);
+    }
+    return currentPersonPath!;
+  }
+
   Stream<bool> isAuthorized() => currentPerson().map((it) => it != null);
 
-  Future<void> signInAnon(String name) async {
+  Future<void> signInAnon(String name, {bool create = true}) async {
     var user = _auth.currentUser;
     if (user == null) {
       final result = await _auth.signInAnonymously();
@@ -50,12 +57,14 @@ class FirebaseProvider {
     }
 
     if (user != null) {
-      return createPerson(Person.create(
-        'users/${user.uid}',
-        name,
-        '',
-        '',
-      ));
+      if (create) {
+        return createPerson(Person.create(
+          'users/${user.uid}',
+          name,
+          '',
+          '',
+        ));
+      }
     } else {
       throw AuthCanceled();
     }
@@ -271,6 +280,29 @@ class FirebaseProvider {
     return _doc(personPath).set({
       'points': FieldValue.increment(count),
     }, SetOptions(merge: true));
+  }
+
+  Future<void> currentPersonEvent(
+      {required Event event, int progress = 1}) async {
+    var person = await currentPerson().firstElementFuture();
+    var eventsProgress = (person?.eventsProgress[event.id] as int?).orDefault();
+    if (eventsProgress >= progress) {
+      throw "Задание уже выполнено";
+    }
+
+    var path = await getPersonPath();
+    return _doc(path).set({
+      'eventsProgress': {
+        event.id: FieldValue.increment(progress),
+      }
+    }, SetOptions(merge: true)).then((value) =>
+        (eventsProgress + progress) < event.conditions
+            ? null
+            : addPoints(path, event.award));
+  }
+
+  Future<void> currentPersonAddPoints(int count) async {
+    return addPoints(await getPersonPath(), count);
   }
 }
 

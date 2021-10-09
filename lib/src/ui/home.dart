@@ -11,7 +11,9 @@ import 'package:app/src/vm/profile_vm.dart';
 import 'package:app/src/vm/vm.dart';
 import 'package:app/src/widgets/user_avatar.dart';
 import 'package:app/widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'add_question.dart';
 
@@ -29,6 +31,75 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
   int _currentPage = 0;
+
+  late List<ReactionDisposer> _disposers;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _disposers = [
+      reaction(
+          (p0) => context
+              .read<ProfileViewModel>()
+              .person
+              .value
+              ?.getNextLevelEvent(), (Event? nextLevelEvent) {
+        print('nextLevelEvent=${nextLevelEvent?.name}');
+        nextLevelEvent?.also((item) async {
+          await showDialog(
+            context: context,
+            builder: (context) => Dialog(
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AspectRatio(
+                      aspectRatio: 1.5,
+                      child: CachedNetworkImage(
+                        imageBuilder: (context, imageProvider) => Image(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          color: context.theme.dividerColor,
+                        ),
+                        imageUrl: item.icon,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      '${item.name}',
+                      style: context.theme.textTheme.headline6,
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      '${item.content}',
+                      style: context.theme.textTheme.subtitle1,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+          print("alert closed");
+          if (["3"].contains(item.id)) {
+            vm.eventComplete(item);
+          }
+        });
+      }),
+    ];
+  }
+
+  @override
+  void dispose() {
+    _disposers.disposeAll();
+    super.dispose();
+  }
 
   Widget build(BuildContext context) {
     return FullScreen(
@@ -110,6 +181,7 @@ class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
   }
 
   Widget buildMissions() {
+    vm.openedMissions();
     return MissionsSection();
   }
 
@@ -138,41 +210,96 @@ class _MissionsSectionState
   }
 
   Widget buildItem(Event item) {
-    print(
-        'events=${vm.person.value?.getNextLevel().events} id=${item.id} contains=${vm.person.value?.getNextLevel().events.contains(item.id)}');
+    var enabled =
+        (vm.person.value?.getNextLevel()?.events.contains(item.id)).orDefault();
     return Opacity(
-      opacity:
-          (vm.person.value?.getNextLevel().events.contains(item.id)).orDefault()
-              ? 1
-              : 0.5,
+      opacity: enabled ? 1 : 0.5,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 8.0),
         child: Card(
-          child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                UserAvatar(
-                  radius: 40,
-                  url: item.icon,
-                  initials: '-',
-                  showHolder: false,
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${item.name}',
-                        style: context.theme.textTheme.headline6,
+          child: Observer(
+            builder: (context) {
+              var isComplete =
+                  (vm.person.value?.isEventComplete(item)).orDefault();
+              return InkWell(
+                onTap: item.link.isEmpty || !enabled || isComplete
+                    ? null
+                    : () async {
+                        launch(item.link);
+                        vm.eventComplete(item);
+                      },
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      foregroundDecoration: isComplete
+                          ? BoxDecoration(color: Colors.white.withOpacity(0.8))
+                          : null,
+                      child: Stack(
+                        alignment: Alignment.topRight,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                UserAvatar(
+                                  radius: 40,
+                                  url: item.icon,
+                                  initials: '-',
+                                  showHolder: false,
+                                ),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${item.name}',
+                                        style:
+                                            context.theme.textTheme.headline6,
+                                      ),
+                                      Text('${item.content}'),
+                                      Text('${item.award} Баллов'),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(4.0),
+                            child: Text(
+                              (LocalProvider.levels
+                                      .find((e) => e.events.contains(item.id))
+                                      ?.name)
+                                  .orDefault(),
+                            ),
+                          ),
+                        ],
                       ),
-                      Text('${item.content}'),
-                    ],
-                  ),
+                    ),
+                    if (isComplete)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.download_done_rounded,
+                            color: Colors.lightGreen,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            'Завершено',
+                            style: context.theme.textTheme.headline6
+                                ?.copyWith(color: Colors.green),
+                          ),
+                        ],
+                      )
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
@@ -192,7 +319,7 @@ class QuestionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 2),
       child: Card(
         child: InkWell(
           onTap: () => onTap?.call(item),
@@ -219,7 +346,8 @@ class QuestionWidget extends StatelessWidget {
                                   Text((item.person().value?.nameOrEmail)
                                       .orDefault()),
                                   Text(
-                                    (item.person().value?.level).orDefault(),
+                                    (item.person().value?.getLevel().name)
+                                        .orDefault(),
                                     style: context.theme.textTheme.caption,
                                   ),
                                 ],

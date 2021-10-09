@@ -1,12 +1,11 @@
 import 'package:app/design_system.dart';
 import 'package:app/extensions.dart';
-import 'package:app/src/resources/images.dart';
+import 'package:app/src/resources/local_provider.dart';
 import 'package:app/src/vm/profile_vm.dart';
 import 'package:app/src/vm/vm.dart';
 import 'package:app/src/widgets/user_avatar.dart';
 import 'package:app/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage._({Key? key}) : super(key: key);
@@ -16,8 +15,6 @@ class ProfilePage extends StatefulWidget {
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
-
-const _url = 'https://play.google.com/store/apps/details?id=ru.vtb.invest';
 
 class _ProfilePageState extends ViewModelState<ProfileViewModel, ProfilePage> {
   Widget build(BuildContext context) {
@@ -100,7 +97,8 @@ class _ProfilePageState extends ViewModelState<ProfileViewModel, ProfilePage> {
             padding: const EdgeInsets.all(16.0),
             child: Column(children: [
               Text(
-                "Количество бонусов: " + (vm.person.value?.points ?? 0).toString(),
+                "Количество бонусов: " +
+                    (vm.person.value?.points ?? 0).toString(),
                 style: context.theme.textTheme.headline5,
               ),
               SizedBox(height: 16),
@@ -113,21 +111,18 @@ class _ProfilePageState extends ViewModelState<ProfileViewModel, ProfilePage> {
               GestureDetector(
                 onTap: _launchURL,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text(
-                      "Открыть брокерский счёт",
-                      style: context.theme.textTheme.headline6?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: VtbColors.blue70
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(
+                        "Открыть брокерский счёт",
+                        style: context.theme.textTheme.headline6?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: VtbColors.blue70),
                       ),
-                    ),
-                    Container(
-                      height: 64,
-                      child: Image.asset("images/vtb_investor.png")
-                    )
-                  ]
-                ),
+                      Container(
+                          height: 64,
+                          child: Image.asset("images/vtb_investor.png"))
+                    ]),
               )
             ]),
           ),
@@ -150,6 +145,5 @@ class _ProfilePageState extends ViewModelState<ProfileViewModel, ProfilePage> {
     );
   }
 
-  void _launchURL() async =>
-      await canLaunch(_url) ? await launch(_url) : throw 'Could not launch $_url';
+  void _launchURL() => LocalProvider.openVtb();
 }

@@ -1,4 +1,5 @@
 import 'package:app/src/models/models.dart';
+import 'package:app/src/resources/local_provider.dart';
 import 'package:app/src/resources/repository.dart';
 import 'package:app/src/vm/vm.dart';
 
@@ -15,4 +16,12 @@ class HomeViewModel extends StreamViewModel {
 
   void removeReaction(Reactionable item) =>
       _repository.provider.removeReaction(item);
+
+  void openedMissions() {
+    eventComplete(LocalProvider.event("1")!);
+  }
+
+  void eventComplete(Event event) {
+    _repository.provider.currentPersonEvent(event: event);
+  }
 }

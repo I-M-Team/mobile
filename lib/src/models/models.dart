@@ -130,8 +130,11 @@ class Event {
   final String content;
   final int conditions;
   final int award;
+  final String link;
 
-  Event(this.id, this.name, this.icon, this.content, this.conditions, this.award);
+  Event(
+      this.id, this.name, this.icon, this.content, this.conditions, this.award,
+      {this.link = ''});
 }
 
 class Level {

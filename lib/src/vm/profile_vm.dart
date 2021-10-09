@@ -1,4 +1,5 @@
 import 'package:app/async.dart';
+import 'package:app/src/models/models.dart';
 import 'package:app/src/models/person_models.dart';
 import 'package:app/src/resources/repository.dart';
 import 'package:app/src/vm/vm.dart';
@@ -28,4 +29,8 @@ class ProfileViewModel extends ViewModel {
   }
 
   void logout() => _repository.logout();
+
+  void eventComplete(Event event) {
+    _repository.provider.currentPersonEvent(event: event);
+  }
 }

@@ -1,17 +1,35 @@
+import 'dart:io';
+
 import 'package:app/extensions.dart';
 import 'package:app/src/models/models.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LocalProvider {
+  static openVtb() => launch(vtbUrl());
+
+  static String vtbUrl() {
+    return Platform.isIOS
+        ? 'https://apps.apple.com/ru/app/id1364026756'
+        : 'https://play.google.com/store/apps/details?id=ru.vtb.invest';
+  }
+
   static List<Event> get visibleEvents => events.filter((e) => e.award > 0);
+
+  static List<Event> get invisibleEvents =>
+      events.filter((e) => e.award == 0 || e.id == "1");
+
+  static Event? event(String id) {
+    return LocalProvider.events.find((e) => e.id == id);
+  }
 
   static final events = [
     Event(
       "1",
-      "Привет!",
-      "mascot",
-      "Есть желание инвестировать, но не знаешь с чего начать? Нажми сюда, чтобы посмотреть свой текущий прогресс в изучении мира инвестиций и увидеть ближайшие доступные задания.",
+      "Привет! Начнем?!",
+      "https://www.verslilietuva.lt/wp-content/uploads/2020/04/shutterstock_577166506.jpg",
+      "Есть желание инвестировать, но не знаешь с чего начать? Перейди на вкладку \"Задания\", чтобы посмотреть свой текущий прогресс в изучении мира инвестиций и увидеть ближайшие доступные задания.",
       1,
-      0,
+      10,
     ),
     Event(
       "2",
@@ -24,7 +42,7 @@ class LocalProvider {
     Event(
       "3",
       "Отлично!",
-      "mascot",
+      "https://plusworld.ru/wp-content/uploads/2020/07/172323_or.jpg",
       "Ты выполнил своё первое задание и получил 10 бонусов, бонусы можно тратить на приобретение акций в приложении ВТБ Инвестиции, а так же на различные внутрисервисные действия.",
       1,
       0,
@@ -36,6 +54,33 @@ class LocalProvider {
       "Заполнить профиль с помощью входа через гугл или просто укажите имя.",
       1,
       15,
+    ),
+    Event(
+      "16",
+      "Основа основ",
+      "https://yt3.ggpht.com/584JjRp5QMuKbyduM_2k5RlXFqHJtQ0qLIPZpwbUjMJmgzZngHcam5JMuZQxyzGMV5ljwJRl0Q=s900-c-k-c0x00ffffff-no-rj",
+      "Узнайте что такое инвестиции и зачем нужно инвестировать посмотрев видео на YouTube",
+      1,
+      20,
+      link: 'https://www.youtube.com/watch?v=-Q6N5jNGo_k',
+    ),
+    Event(
+      "13",
+      "Демо",
+      "https://lh3.googleusercontent.com/proxy/_YPDb8F4gb-MBUt8ZrmVwVcFqU0KISM3WLE0bgNq4Xl2nndf_HDvzbT9_b0mtS9XreuTNh5KgTYaL5UwcIw39p6abaX2rLrlaU8wdFNm0FqqUB4W9VRzcjAQC7wCiN5mIUXQRK_LyYg",
+      "Открыть демо-счет в ВТБ Инвестиции.",
+      1,
+      50,
+      link: vtbUrl(),
+    ),
+    Event(
+      "15",
+      "Первые шаги на бирже",
+      "https://school.vtb.ru/upload/resize_cache/iblock/c34/800_800_1/169f0bd31e34ebe9f95457e95147a333.png",
+      "Пройдите онлайн-курс от ВТБ за 5 уроков вы узнаете ответы на основные вопросы возникающие у начинающего инвестора",
+      1,
+      50,
+      link: 'https://school.vtb.ru/materials/courses/pervye-shagi-na-birzhe/',
     ),
     Event(
       "5",
@@ -102,14 +147,6 @@ class LocalProvider {
       30,
     ),
     Event(
-      "13",
-      "Демо",
-      "https://lh3.googleusercontent.com/proxy/_YPDb8F4gb-MBUt8ZrmVwVcFqU0KISM3WLE0bgNq4Xl2nndf_HDvzbT9_b0mtS9XreuTNh5KgTYaL5UwcIw39p6abaX2rLrlaU8wdFNm0FqqUB4W9VRzcjAQC7wCiN5mIUXQRK_LyYg",
-      "Открыть демо-счет в Инвестициях ВТБ.",
-      1,
-      50,
-    ),
-    Event(
       "14",
       "VTB",
       "https://s3-symbol-logo.tradingview.com/vtbr--600.png",
@@ -127,18 +164,18 @@ class LocalProvider {
     ),
     Level(
       1,
-      "Начинающий инвестор",
-      ["1", "2", "3", "4"],
+      "Начинающий",
+      ["1", "2", "3", "4", "13", "16"],
     ),
     Level(
       2,
-      "Опытный инвестор",
-      ["5", "6", "7", "8"],
+      "Опытный",
+      ["5", "6", "7", "8", "15"],
     ),
     Level(
       3,
-      "Мегасупер инвестор",
-      ["9", "10", "11", "12", "13", "14"],
+      "Мегасупер",
+      ["9", "10", "11", "12", "14"],
     )
   ];
 }

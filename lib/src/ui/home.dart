@@ -11,6 +11,8 @@ import 'package:app/src/widgets/user_avatar.dart';
 import 'package:app/widgets.dart';
 import 'package:flutter/material.dart';
 
+import 'add_question.dart';
+
 class HomePage extends StatefulWidget {
   HomePage._({Key? key}) : super(key: key);
 
@@ -56,13 +58,14 @@ class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
               _buildHomeItem(context, vm.questions.value[index]),
         );
       }),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          context.tryAuthorized(() {
-            context.scaffoldMessenger.showSnackBarError(text: 'NIY');
-          });
-        },
+      floatingActionButton: Consumer<ProfileViewModel>(
+        builder: (context, vm, child) => FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            context.tryAuthorized(() => context.navigator
+                .pushPage((context) => AddQuestionPage.show()));
+          },
+        ),
       ),
     );
   }

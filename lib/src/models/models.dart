@@ -23,11 +23,12 @@ class Personalized extends Doc {
 class Question extends Personalized {
   // should handle links on shares
   final String content;
+  final List<dynamic> tickers;
 
-  Question(String path, String personPath, this.content)
+  Question(String path, String personPath, this.content, this.tickers)
       : super(path, personPath);
 
-  Question.create(String personPath, this.content) : super('', personPath);
+  Question.create(String personPath, this.content, this.tickers) : super('', personPath);
 
   factory Question.fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -36,12 +37,14 @@ class Question extends Personalized {
       snapshot.reference.path,
       (json['person'] as DocumentReference?)?.path ?? '',
       json['content'] as String? ?? '',
+      json['tickers'] as List<dynamic>? ?? [],
     );
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'person': FirebaseFirestore.instance.doc(personPath),
         'content': content,
+        'tickers': tickers,
         'created_at': Timestamp.now(),
       };
 }

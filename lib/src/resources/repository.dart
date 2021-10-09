@@ -26,8 +26,8 @@ class Repository {
 
   void logout() => _provider.signOut();
 
-  void createQuestion(String content) => _provider.currentPersonPath
-      ?.let((it) => _provider.upsertQuestion(Question.create(it, content)));
+  void createQuestion(String content, List<String> tickers) => _provider.currentPersonPath
+      ?.let((it) => _provider.upsertQuestion(Question.create(it, content, tickers)));
 
   Stream<List<Question>> questions() => _provider.questions();
 }

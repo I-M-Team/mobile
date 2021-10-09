@@ -1,12 +1,9 @@
-import 'package:app/async.dart';
 import 'package:app/extensions.dart';
 import 'package:app/src/models/models.dart';
-import 'package:app/src/models/person_models.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class LocalProvider {
+  static List<Event> get visibleEvents => events.filter((e) => e.award > 0);
+
   static final events = [
     Event(
       "1",

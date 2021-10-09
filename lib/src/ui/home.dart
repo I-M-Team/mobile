@@ -1,6 +1,7 @@
 import 'package:app/extensions.dart';
 import 'package:app/main.dart';
 import 'package:app/src/models/models.dart';
+import 'package:app/src/resources/local_provider.dart';
 import 'package:app/src/resources/repository.dart';
 import 'package:app/src/ui/profile.dart';
 import 'package:app/src/ui/question.dart';
@@ -26,6 +27,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
+  int _currentPage = 0;
+
   Widget build(BuildContext context) {
     return FullScreen(
       appBar: AppBar(
@@ -51,34 +54,120 @@ class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
         ],
       ),
       padding: EdgeInsets.zero,
-      child: Observer(
-        builder: (context) => ListView.builder(
-          itemCount: vm.questions.value.length,
-          itemBuilder: (context, index) => QuestionWidget(
-            item: vm.questions.value[index],
-            onTap: (item) {
-              context.navigator.pushPage((context) => QuestionPage.show(item));
-            },
-            action: (item, a) {
-              context.tryAuthorized(() {
-                // todo requery a after login
-                if (a == Availability.not_acted) {
-                  vm.reaction(item);
-                } else {
-                  vm.removeReaction(item);
-                }
-              });
-            },
-          ),
+      child: whenValue(_currentPage, {
+        0: buildQuestions,
+        1: buildMissions,
+        2: buildLeaderboard,
+      }),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          context.tryAuthorized(() =>
+              context.navigator.pushPage((context) => AddQuestionPage.show()));
+        },
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentPage,
+        onTap: (i) => setState(() => _currentPage = i),
+        items: [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.question_answer_outlined), label: 'Questions'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.add_task), label: 'Missions'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.leaderboard_outlined), label: 'Leaderboard'),
+        ],
+      ),
+    );
+  }
+
+  Widget buildQuestions() {
+    return Observer(
+      builder: (context) => ListView.builder(
+        padding: EdgeInsets.only(top: 30),
+        itemCount: vm.questions.value.length,
+        itemBuilder: (context, index) => QuestionWidget(
+          item: vm.questions.value[index],
+          onTap: (item) {
+            context.navigator.pushPage((context) => QuestionPage.show(item));
+          },
+          action: (item, a) {
+            context.tryAuthorized(() {
+              // todo requery a after login
+              if (a == Availability.not_acted) {
+                vm.reaction(item);
+              } else {
+                vm.removeReaction(item);
+              }
+            });
+          },
         ),
       ),
-      floatingActionButton: Consumer<ProfileViewModel>(
-        builder: (context, vm, child) => FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            context.tryAuthorized(() => context.navigator
-                .pushPage((context) => AddQuestionPage.show()));
-          },
+    );
+  }
+
+  Widget buildMissions() {
+    return MissionsSection();
+  }
+
+  Widget buildLeaderboard() {
+    return Container();
+  }
+}
+
+class MissionsSection extends StatefulWidget {
+  const MissionsSection({Key? key}) : super(key: key);
+
+  @override
+  _MissionsSectionState createState() => _MissionsSectionState();
+}
+
+class _MissionsSectionState
+    extends ViewModelState<ProfileViewModel, MissionsSection> {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.only(top: 30),
+      itemBuilder: (context, index) =>
+          buildItem(LocalProvider.visibleEvents[index]),
+      itemCount: LocalProvider.visibleEvents.size,
+    );
+  }
+
+  Widget buildItem(Event item) {
+    return Opacity(
+      opacity:
+          (vm.person.value?.getNextLevel().events.contains(item.id)).orDefault()
+              ? 1
+              : 0.5,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8.0),
+        child: Card(
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                UserAvatar(
+                  radius: 40,
+                  url: item.icon,
+                  initials: '-',
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${item.name}',
+                        style: context.theme.textTheme.headline6,
+                      ),
+                      Text('${item.content}'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

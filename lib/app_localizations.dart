@@ -67,7 +67,6 @@ extension ContextExtensions on BuildContext {
 }
 
 extension LocalizationExtension on AppLocalizations {
-
   String formatDuration(Duration duration) {
     var result = <String>[];
     if (duration.inHours > 0) {
@@ -102,7 +101,7 @@ extension LocalizationExtension on AppLocalizations {
 
   String? humanizeError(dynamic error) {
     error = error is DioError
-        ? when(error.type, {
+        ? whenValue(error.type, {
             DioErrorType.other: () => error.error,
             DioErrorType.response: () =>
                 (error as DioError).response?.statusCode == 404

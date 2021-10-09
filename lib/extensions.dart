@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-R? when<T, R>(T value, Map<T, R Function()> mapping) {
+R? whenValue<T, R>(T value, Map<T, R Function()> mapping) {
   return mapping[value]?.call();
 }
 

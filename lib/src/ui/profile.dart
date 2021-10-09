@@ -1,7 +1,7 @@
 import 'package:app/extensions.dart';
-import 'package:app/src/resources/local_provider.dart';
 import 'package:app/src/vm/profile_vm.dart';
 import 'package:app/src/vm/vm.dart';
+import 'package:app/src/widgets/user_avatar.dart';
 import 'package:app/widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -29,36 +29,64 @@ class _ProfilePageState extends ViewModelState<ProfileViewModel, ProfilePage> {
               elevation: 6,
               color: context.theme.colorScheme.primary,
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.0),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Expanded(
-                        child: Column(
-                            children: [
-                              Text("Мой уровень"),
-                              Text(vm.getLevel().name),
-                            ]
-                        ),
+                      UserAvatar(
+                        initials: vm.person.value?.nameOrEmail,
+                        url: vm.person.value?.photoUrl,
+                        radius: 60,
                       ),
                       Expanded(
                         child: Column(
-                            children: [
-                              Text("Вопросов"),
-                              Text("5"),
-                            ]
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 32.0),
+                              child: Text(
+                                '${vm.person.value?.getLevel().name}',
+                                style: context.theme.textTheme.headline5
+                                    ?.copyWith(color: Colors.white),
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        vm.questionsCount.value.toString(),
+                                        style: context.theme.textTheme.headline5
+                                            ?.copyWith(color: Colors.white),
+                                      ),
+                                      Text(
+                                        "Questions",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Column(children: [
+                                    Text(
+                                      vm.answersCount.value.toString(),
+                                      style: context.theme.textTheme.headline5
+                                          ?.copyWith(color: Colors.white),
+                                    ),
+                                    Text(
+                                      "Answers",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ]),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                      Expanded(
-                        child: Column(
-                            children: [
-                              Text("Ответов"),
-                              Text("10"),
-                            ]
-                        ),
-                      )
-                    ]
-                ),
+                    ]),
               ),
             );
           }),

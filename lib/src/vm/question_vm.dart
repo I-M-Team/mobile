@@ -9,11 +9,17 @@ class QuestionViewModel extends StreamViewModel {
 
   final Observable<List<Answer>> answers;
 
+  final Observable<bool> isAnswerAvailable;
+
   late final Computed<bool> isAcceptAvailable;
 
   QuestionViewModel(this._repository, Question item)
       : item = _repository.provider.question(item.path).toObservable(item),
-        answers = _repository.provider.answers(item).toObservable([]) {
+        answers = _repository.provider.answers(item).toObservable([]),
+        isAnswerAvailable = _repository.provider
+            .isAnswerAvailable(item)
+            .map((event) => Availability.not_acted == event)
+            .toObservable(false) {
     isAcceptAvailable = Computed(() =>
         item.availability().value == Availability.owner &&
         answers.value.every((e) => !e.accepted));

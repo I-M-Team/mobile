@@ -23,6 +23,9 @@ class _ProfilePageState extends ViewModelState<ProfileViewModel, ProfilePage> {
         children: [
           // todo add my questions
           // todo add my answers
+          Observer(builder: (context) {
+            return Text('ANSWERS: ${vm.answersCount.value}');
+          }),
           Spacer(),
           Container(
             width: double.infinity,

@@ -62,7 +62,7 @@ class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
             action: (item, a) {
               context.tryAuthorized(() {
                 // todo requery a after login
-                if (a == Availability.not_reacted) {
+                if (a == Availability.not_acted) {
                   vm.reaction(item);
                 } else {
                   vm.removeReaction(item);
@@ -149,7 +149,7 @@ class QuestionWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          item.availability().value != Availability.reacted
+                          item.availability().value != Availability.acted
                               ? Icons.thumb_up_outlined
                               : Icons.thumb_up,
                         ),

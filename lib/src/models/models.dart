@@ -33,8 +33,8 @@ class Reactionable extends Personalized {
 }
 
 enum Availability {
-  not_reacted,
-  reacted,
+  not_acted,
+  acted,
   owner,
 }
 

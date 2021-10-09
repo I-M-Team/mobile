@@ -38,7 +38,7 @@ class _QuestionPageState
               child: QuestionWidget(
                 item: vm.item.value,
                 action: (item, a) {
-                  if (a == Availability.not_reacted) {
+                  if (a == Availability.not_acted) {
                     vm.reaction(item);
                   } else {
                     vm.removeReaction(item);
@@ -73,7 +73,7 @@ class _QuestionPageState
                               )
                             : null,
                         action: (item, a) {
-                          if (a == Availability.not_reacted) {
+                          if (a == Availability.not_acted) {
                             vm.reaction(item);
                           } else {
                             vm.removeReaction(item);
@@ -87,13 +87,15 @@ class _QuestionPageState
             )
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.question_answer_outlined),
-          onPressed: () {
-            context.tryAuthorized(() => context.navigator
-                .pushPage((context) => AddAnswerPage.show(vm.item.value)));
-          },
-        ),
+        floatingActionButton: vm.isAnswerAvailable.value
+            ? FloatingActionButton(
+                child: Icon(Icons.question_answer_outlined),
+                onPressed: () {
+                  context.tryAuthorized(() => context.navigator.pushPage(
+                      (context) => AddAnswerPage.show(vm.item.value)));
+                },
+              )
+            : null,
       );
     });
   }
@@ -164,7 +166,7 @@ class AnswerWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          item.availability().value != Availability.reacted
+                          item.availability().value != Availability.acted
                               ? Icons.thumb_up_outlined
                               : Icons.thumb_up,
                         ),

@@ -23,6 +23,9 @@ class FirebaseProvider {
   static CollectionReference<Map<String, dynamic>> _collection(String path) =>
       FirebaseFirestore.instance.collection(path);
 
+  static Query<Map<String, dynamic>> _collectionGroup(String path) =>
+      FirebaseFirestore.instance.collectionGroup(path);
+
   static CollectionReference<Map<String, dynamic>> _answers(String path) =>
       _doc(path).collection('answers');
 
@@ -118,6 +121,34 @@ class FirebaseProvider {
         json.takeIf((it) => it.exists)?.let((it) => Person.fromSnapshot(it)));
   }
 
+  Stream<int> personQuestionsCount(Person item) {
+    return _questions
+        .where('person', isEqualTo: _doc(item.path))
+        .snapshots()
+        .map((event) => event.size);
+  }
+
+  Stream<int> personAnswersCount(Person item) {
+    return _collectionGroup('answers')
+        .where('person', isEqualTo: _doc(item.path))
+        .snapshots()
+        .map((event) => event.size);
+  }
+
+  Stream<List<Question>> personQuestions(Person item) {
+    return _questions
+        .where('person', isEqualTo: _doc(item.path))
+        .snapshots()
+        .map((event) => event.docs.mapToList((e) => Question.fromSnapshot(e)));
+  }
+
+  Stream<List<Answer>> personAnswers(Person item) {
+    return _collectionGroup('answers')
+        .where('person', isEqualTo: _doc(item.path))
+        .snapshots()
+        .map((event) => event.docs.mapToList((e) => Answer.fromSnapshot(e)));
+  }
+
   Stream<Question> question(String path) {
     return _doc(path).snapshots().map((event) => Question.fromSnapshot(event));
   }
@@ -141,6 +172,18 @@ class FirebaseProvider {
         : _doc(item.path).set(item.toJson(), SetOptions(merge: true));
   }
 
+  Stream<Answer?> currentPersonAnswer(Question item) {
+    return currentPerson().flatMapUntilNext((value) => value == null
+        ? Stream.value(null)
+        : _answers(item.path)
+            .where('person', isEqualTo: _doc(value.path))
+            .limit(1)
+            .snapshots()
+            .map((event) => event.docs.first
+                .takeIf((it) => it.exists)
+                ?.let((e) => Answer.fromSnapshot(e))));
+  }
+
   Stream<List<Answer>> answers(Question item) {
     return _answers(item.path)
         .orderBy('accepted', descending: true)
@@ -149,14 +192,17 @@ class FirebaseProvider {
         .map((event) => event.docs.mapToList((e) => Answer.fromSnapshot(e)));
   }
 
-  static Stream<Availability> isAnswerAvailable(Question item) {
+  Stream<Availability> isAnswerAvailable(Question item) {
     return _auth.authStateChanges().flatMapUntilNext((value) =>
         _doc(item.personPath).id == value?.uid
             ? Stream.value(Availability.owner)
-            : _answers(item.path).doc(value?.uid).snapshots().map((event) =>
-                event.exists
-                    ? Availability.reacted
-                    : Availability.not_reacted));
+            : _answers(item.path)
+                .where('person', isEqualTo: _users.doc(value?.uid))
+                .limit(1)
+                .snapshots()
+                .map((event) => event.size > 0
+                    ? Availability.acted
+                    : Availability.not_acted));
   }
 
   Future<void> upsertAnswer(Question question, Answer item) {
@@ -193,9 +239,7 @@ class FirebaseProvider {
         _doc(target.personPath).id == value?.uid
             ? Stream.value(Availability.owner)
             : _reactions(target.path).doc(value?.uid).snapshots().map((event) =>
-                event.exists
-                    ? Availability.reacted
-                    : Availability.not_reacted));
+                event.exists ? Availability.acted : Availability.not_acted));
   }
 
   Future<void> createReaction(Reactionable target) {

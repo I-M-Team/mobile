@@ -7,7 +7,7 @@ class Person {
   final String photoUrl;
   final String level;
   final int points;
-  final Map<String, int> eventsProgress;
+  final Map<String, dynamic> eventsProgress;
 
   Person.create(this.path, this.name, this.email, this.photoUrl)
       : level = 'Новичок',
@@ -28,7 +28,7 @@ class Person {
       json['photoUrl'] as String? ?? '',
       json['level'] as String? ?? '',
       json['points'] as int? ?? 0,
-      json['eventsProgress'] as Map<String, int>? ?? {},
+      json['eventsProgress'] as Map<String, dynamic>? ?? {},
     );
   }
 

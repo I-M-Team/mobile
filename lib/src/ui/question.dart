@@ -114,75 +114,85 @@ class AnswerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
-      child: Card(
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: InkWell(
-            child: Observer(
-              builder: (context) => Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      children: <Widget>[
-                        Observer(
-                          builder: (context) => Row(
-                            key: Key(item.personPath),
-                            children: [
-                              UserAvatar(
-                                initials: item.person().value?.nameOrEmail,
-                                url: item.person().value?.photoUrl,
-                                radius: 16,
-                              ),
-                              SizedBox(width: 8.0),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text((item.person().value?.nameOrEmail)
-                                      .orDefault()),
-                                  Text(
-                                    (item.person().value?.level).orDefault(),
-                                    style: context.theme.textTheme.caption,
-                                  ),
-                                ],
-                              )
-                            ],
+      child: Column(
+        children: <Widget>[
+          Card(
+            child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: InkWell(
+              child: Observer(
+                builder: (context) => Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: <Widget>[
+                          Observer(
+                            builder: (context) => Row(
+                              key: Key(item.personPath),
+                              children: [
+                                UserAvatar(
+                                  initials: item.person().value?.nameOrEmail,
+                                  url: item.person().value?.photoUrl,
+                                  radius: 16,
+                                ),
+                                SizedBox(width: 8.0),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text((item.person().value?.nameOrEmail)
+                                        .orDefault()),
+                                    Text(
+                                      (item.person().value?.level).orDefault(),
+                                      style: context.theme.textTheme.caption,
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 8.0),
-                        SizedBox(
-                          width: double.infinity,
-                          child: Text(item.content),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (trailing != null) trailing!,
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: item.availability().value == Availability.owner
-                        ? null
-                        : () => action(item, item.availability().value),
-                    icon: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          item.availability().value != Availability.acted
-                              ? Icons.thumb_up_outlined
-                              : Icons.thumb_up,
-                        ),
-                        if (item.reactionCount().value > 0)
-                          Text(
-                            '${item.reactionCount().value}',
-                            style: context.theme.textTheme.caption,
+                          SizedBox(height: 8.0),
+                          SizedBox(
+                            width: double.infinity,
+                            child: Text(item.content),
                           ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                    if (trailing != null) trailing!,
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: item.availability().value == Availability.owner
+                          ? null
+                          : () => action(item, item.availability().value),
+                      icon: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            item.availability().value != Availability.acted
+                                ? Icons.thumb_up_outlined
+                                : Icons.thumb_up,
+                          ),
+                          if (item.reactionCount().value > 0)
+                            Text(
+                              '${item.reactionCount().value}',
+                              style: context.theme.textTheme.caption,
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text("report", style: Theme.of(context).textTheme.caption),
+            SizedBox(width: 18),
+          ]),
+        ],
       ),
     );
   }

@@ -20,7 +20,22 @@ class Personalized extends Doc {
   }
 }
 
-class Question extends Personalized {
+class Reactionable extends Personalized {
+  late final Lazy<Observable<Availability>> availability;
+
+  Reactionable(String path, String personPath) : super(path, personPath) {
+    availability = Lazy(() => FirebaseProvider.isReactionAvailable(this)
+        .toObservable(Availability.unavailable));
+  }
+}
+
+enum Availability {
+  available,
+  available_negation,
+  unavailable,
+}
+
+class Question extends Reactionable {
   // should handle links on shares
   final String content;
   final List<dynamic> tickers;
@@ -49,7 +64,7 @@ class Question extends Personalized {
       };
 }
 
-class Answer extends Personalized {
+class Answer extends Reactionable {
   final String personPath;
   // should handle links on shares
   final String content;

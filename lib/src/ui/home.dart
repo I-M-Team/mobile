@@ -1,7 +1,6 @@
 import 'package:app/extensions.dart';
 import 'package:app/main.dart';
 import 'package:app/src/models/models.dart';
-import 'package:app/src/resources/images.dart';
 import 'package:app/src/resources/repository.dart';
 import 'package:app/src/ui/profile.dart';
 import 'package:app/src/vm/home_vm.dart';
@@ -76,41 +75,53 @@ class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
       child: Card(
         child: InkWell(
           onTap: () {},
-          child: ListTile(
-            trailing: IconButton(
-              onPressed: () {},
-              icon: Image(image: IconAssets.like),
-            ),
-            title: Column(
-              children: <Widget>[
-                Observer(
-                  builder: (context) => Row(
-                    children: [
-                      UserAvatar(
-                        initials: item.person().value?.nameOrEmail,
-                        url: item.person().value?.photoUrl,
-                        radius: 16,
-                      ),
-                      SizedBox(width: 8.0),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text((item.person().value?.nameOrEmail).orDefault()),
-                          Text(
-                            (item.person().value?.level).orDefault(),
-                            style: context.theme.textTheme.caption,
+          child: Observer(
+              builder: (context) => ListTile(
+                    trailing:
+                        item.availability().value == Availability.unavailable
+                            ? null
+                            : IconButton(
+                                onPressed: () {
+                                  vm.reaction(item);
+                                },
+                                icon: Icon(
+                                  item.availability().value ==
+                                          Availability.available
+                                      ? Icons.thumb_up_outlined
+                                      : Icons.thumb_up,
+                                ),
+                              ),
+                    title: Column(
+                      children: <Widget>[
+                        Observer(
+                          builder: (context) => Row(
+                            children: [
+                              UserAvatar(
+                                initials: item.person().value?.nameOrEmail,
+                                url: item.person().value?.photoUrl,
+                                radius: 16,
+                              ),
+                              SizedBox(width: 8.0),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text((item.person().value?.nameOrEmail)
+                                      .orDefault()),
+                                  Text(
+                                    (item.person().value?.level).orDefault(),
+                                    style: context.theme.textTheme.caption,
+                                  ),
+                                ],
+                              )
+                            ],
                           ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(height: 8.0),
-                Text(item.content),
-                SizedBox(height: 8.0),
-              ],
-            ),
-          ),
+                        ),
+                        SizedBox(height: 8.0),
+                        Text(item.content),
+                        SizedBox(height: 8.0),
+                      ],
+                    ),
+                  )),
         ),
       ),
     );

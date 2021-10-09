@@ -120,13 +120,13 @@ class FirebaseProvider {
         .map((event) => event.docs.mapToList((e) => Answer.fromSnapshot(e)));
   }
 
-  Stream<Availability> isAnswerAvailable(Question item) {
+  static Stream<Availability> isAnswerAvailable(Question item) {
     return _auth.authStateChanges().flatMapUntilNext((value) =>
         _doc(item.personPath).id == value?.uid
-            ? Stream.value(Availability.owner)
+            ? Stream.value(Availability.unavailable)
             : _answers(item.path).doc(value?.uid).snapshots().map((event) =>
                 event.exists
-                    ? Availability.unavailable
+                    ? Availability.available_negation
                     : Availability.available));
   }
 
@@ -156,17 +156,17 @@ class FirebaseProvider {
     return _reactions(item.path).snapshots().map((event) => event.size);
   }
 
-  Stream<Availability> isReactionAvailable(Personalized target) {
+  static Stream<Availability> isReactionAvailable(Reactionable target) {
     return _auth.authStateChanges().flatMapUntilNext((value) =>
         _doc(target.personPath).id == value?.uid
-            ? Stream.value(Availability.owner)
+            ? Stream.value(Availability.unavailable)
             : _reactions(target.path).doc(value?.uid).snapshots().map((event) =>
                 event.exists
-                    ? Availability.unavailable
+                    ? Availability.available_negation
                     : Availability.available));
   }
 
-  Future<void> createReaction(Personalized target) {
+  Future<void> createReaction(Reactionable target) {
     // todo should use isReactionAvailable before execution
     var id = _auth.currentUser?.uid;
     return _reactions(target.path)
@@ -174,17 +174,11 @@ class FirebaseProvider {
         .set(Reaction.create(_users.doc(id).path).toJson());
   }
 
-  Future<void> removeReaction(Personalized target) {
+  Future<void> removeReaction(Reactionable target) {
     // todo should use !isReactionAvailable before execution
     var id = _auth.currentUser?.uid;
     return _reactions(target.path).doc(id).delete();
   }
-}
-
-enum Availability {
-  available,
-  unavailable,
-  owner,
 }
 
 class AuthCanceled implements Exception {

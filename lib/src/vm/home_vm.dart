@@ -10,4 +10,9 @@ class HomeViewModel extends StreamViewModel {
   HomeViewModel(this._repository) {
     questions = _repository.questions().toObservable([]);
   }
+
+  void reaction(Reactionable item) => _repository.provider.createReaction(item);
+
+  void removeReaction(Reactionable item) =>
+      _repository.provider.removeReaction(item);
 }

@@ -6,28 +6,27 @@ import 'package:app/src/resources/firebase_provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 class Repository {
-  final _provider = FirebaseProvider();
+  final provider = FirebaseProvider();
 
   Repository() {}
 
-  Future<bool> get isAuthorized =>
-      _provider.isAuthorized().firstElementFuture();
+  Future<bool> get isAuthorized => provider.isAuthorized().firstElementFuture();
 
-  Stream<bool> get authorized => _provider.isAuthorized();
+  Stream<bool> get authorized => provider.isAuthorized();
 
-  Stream<bool> loginGoogle() => _provider
+  Stream<bool> loginGoogle() => provider
       .signInGoogle()
       .then((value) => true)
       .asStream()
       .onErrorReturnWith(
           (error, stackTrace) => error is AuthCanceled ? false : throw error);
 
-  Stream<Person?> currentPerson() => _provider.currentPerson();
+  Stream<Person?> currentPerson() => provider.currentPerson();
 
-  void logout() => _provider.signOut();
+  void logout() => provider.signOut();
 
-  void createQuestion(String content, List<String> tickers) => _provider.currentPersonPath
-      ?.let((it) => _provider.upsertQuestion(Question.create(it, content, tickers)));
+  void createQuestion(String content, List<String> tickers) => provider.currentPersonPath
+      ?.let((it) => provider.upsertQuestion(Question.create(it, content, tickers)));
 
-  Stream<List<Question>> questions() => _provider.questions();
+  Stream<List<Question>> questions() => provider.questions();
 }

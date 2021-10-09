@@ -60,11 +60,14 @@ class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
               context.navigator.pushPage((context) => QuestionPage.show(item));
             },
             action: (item, a) {
-              if (a == Availability.available) {
-                vm.reaction(item);
-              } else {
-                vm.removeReaction(item);
-              }
+              context.tryAuthorized(() {
+                // todo requery a after login
+                if (a == Availability.not_reacted) {
+                  vm.reaction(item);
+                } else {
+                  vm.removeReaction(item);
+                }
+              });
             },
           ),
         ),
@@ -96,10 +99,10 @@ class QuestionWidget extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
       child: Card(
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: InkWell(
-            onTap: () => onTap?.call(item),
+        child: InkWell(
+          onTap: () => onTap?.call(item),
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
             child: Observer(
               builder: (context) => Row(
                 children: [
@@ -141,13 +144,12 @@ class QuestionWidget extends StatelessWidget {
                   Column(
                     children: [
                       IconButton(
-                        onPressed: item.availability().value ==
-                                Availability.unavailable
-                            ? null
-                            : () => action(item, item.availability().value),
+                        onPressed:
+                            item.availability().value == Availability.owner
+                                ? null
+                                : () => action(item, item.availability().value),
                         icon: Icon(
-                          item.availability().value !=
-                                  Availability.available_negation
+                          item.availability().value != Availability.reacted
                               ? Icons.thumb_up_outlined
                               : Icons.thumb_up,
                         ),

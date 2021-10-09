@@ -41,7 +41,7 @@ class UserAvatar extends StatelessWidget {
             ),
           );
 
-    return url == null
+    return url.isNullOrEmpty
         ? _container(context, holder: holder)
         : CachedNetworkImage(
             imageBuilder: (context, imageProvider) =>

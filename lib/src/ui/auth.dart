@@ -36,7 +36,6 @@ class _AuthPageState extends ViewModelState<AuthViewModel, AuthPage> {
               onChanged: (value) => vm.name.set(value),
               textCapitalization: TextCapitalization.words,
               decoration: InputDecoration(
-                border: InputBorder.none,
                 labelText: 'Name',
                 labelStyle: TextStyle(
                     color:

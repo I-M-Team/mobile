@@ -38,7 +38,7 @@ class _QuestionPageState
               child: QuestionWidget(
                 item: vm.item.value,
                 action: (item, a) {
-                  if (a == Availability.available) {
+                  if (a == Availability.not_reacted) {
                     vm.reaction(item);
                   } else {
                     vm.removeReaction(item);
@@ -51,16 +51,37 @@ class _QuestionPageState
               child: Observer(
                 builder: (context) => ListView.builder(
                   itemCount: vm.answers.value.length,
-                  itemBuilder: (context, index) => AnswerWidget(
-                    item: vm.answers.value[index],
-                    action: (item, a) {
-                      if (a == Availability.available) {
-                        vm.reaction(item);
-                      } else {
-                        vm.removeReaction(item);
-                      }
-                    },
-                  ),
+                  itemBuilder: (context, index) {
+                    var item = vm.answers.value[index];
+                    return AnimatedSwitcher(
+                      duration: Duration(milliseconds: 300),
+                      child: AnswerWidget(
+                        key: Key(item.hashCode.toString()),
+                        item: item,
+                        trailing: item.accepted || vm.isAcceptAvailable.value
+                            ? IconButton(
+                                onPressed: vm.item.value.availability().value !=
+                                        Availability.owner
+                                    ? null
+                                    : () => vm.toggleAccept(item),
+                                icon: Icon(
+                                  item.accepted
+                                      ? Icons.star
+                                      : Icons.star_border,
+                                  color: Colors.green,
+                                ),
+                              )
+                            : null,
+                        action: (item, a) {
+                          if (a == Availability.not_reacted) {
+                            vm.reaction(item);
+                          } else {
+                            vm.removeReaction(item);
+                          }
+                        },
+                      ),
+                    );
+                  },
                 ),
               ),
             )
@@ -80,9 +101,11 @@ class _QuestionPageState
 
 class AnswerWidget extends StatelessWidget {
   final Answer item;
+  final Widget? trailing;
   final void Function(Answer item, Availability a) action;
 
-  const AnswerWidget({Key? key, required this.item, required this.action})
+  const AnswerWidget(
+      {Key? key, required this.item, required this.action, this.trailing})
       : super(key: key);
 
   @override
@@ -101,6 +124,7 @@ class AnswerWidget extends StatelessWidget {
                       children: <Widget>[
                         Observer(
                           builder: (context) => Row(
+                            key: Key(item.personPath),
                             children: [
                               UserAvatar(
                                 initials: item.person().value?.nameOrEmail,
@@ -131,16 +155,16 @@ class AnswerWidget extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (trailing != null) trailing!,
                   Column(
                     children: [
                       IconButton(
-                        onPressed: item.availability().value ==
-                                Availability.unavailable
-                            ? null
-                            : () => action(item, item.availability().value),
+                        onPressed:
+                            item.availability().value == Availability.owner
+                                ? null
+                                : () => action(item, item.availability().value),
                         icon: Icon(
-                          item.availability().value !=
-                                  Availability.available_negation
+                          item.availability().value != Availability.reacted
                               ? Icons.thumb_up_outlined
                               : Icons.thumb_up,
                         ),

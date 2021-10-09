@@ -142,6 +142,8 @@ class FirebaseProvider {
 
   Stream<List<Answer>> answers(Question item) {
     return _answers(item.path)
+        .orderBy('accepted', descending: true)
+        .orderBy('created_at')
         .snapshots()
         .map((event) => event.docs.mapToList((e) => Answer.fromSnapshot(e)));
   }
@@ -149,11 +151,11 @@ class FirebaseProvider {
   static Stream<Availability> isAnswerAvailable(Question item) {
     return _auth.authStateChanges().flatMapUntilNext((value) =>
         _doc(item.personPath).id == value?.uid
-            ? Stream.value(Availability.unavailable)
+            ? Stream.value(Availability.owner)
             : _answers(item.path).doc(value?.uid).snapshots().map((event) =>
                 event.exists
-                    ? Availability.available_negation
-                    : Availability.available));
+                    ? Availability.reacted
+                    : Availability.not_reacted));
   }
 
   Future<void> upsertAnswer(Question question, Answer item) {
@@ -167,9 +169,9 @@ class FirebaseProvider {
     return _doc(item.path).delete();
   }
 
-  Future<void> acceptAnswer(Answer item) {
+  Future<void> acceptAnswer(Answer item, bool value) {
     // todo should check is owner of question
-    return _doc(item.path).set({'accepted': true}, SetOptions(merge: true));
+    return _doc(item.path).set({'accepted': value}, SetOptions(merge: true));
   }
 
   Stream<List<Reaction>> reactions(Doc item) {
@@ -185,11 +187,11 @@ class FirebaseProvider {
   static Stream<Availability> isReactionAvailable(Reactionable target) {
     return _auth.authStateChanges().flatMapUntilNext((value) =>
         _doc(target.personPath).id == value?.uid
-            ? Stream.value(Availability.unavailable)
+            ? Stream.value(Availability.owner)
             : _reactions(target.path).doc(value?.uid).snapshots().map((event) =>
                 event.exists
-                    ? Availability.available_negation
-                    : Availability.available));
+                    ? Availability.reacted
+                    : Availability.not_reacted));
   }
 
   Future<void> createReaction(Reactionable target) {

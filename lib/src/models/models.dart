@@ -26,16 +26,16 @@ class Reactionable extends Personalized {
 
   Reactionable(String path, String personPath) : super(path, personPath) {
     availability = Lazy(() => FirebaseProvider.isReactionAvailable(this)
-        .toObservable(Availability.unavailable));
+        .toObservable(Availability.owner));
     reactionCount =
         Lazy(() => FirebaseProvider.reactionCount(this).toObservable(0));
   }
 }
 
 enum Availability {
-  available,
-  available_negation,
-  unavailable,
+  not_reacted,
+  reacted,
+  owner,
 }
 
 class Question extends Reactionable {

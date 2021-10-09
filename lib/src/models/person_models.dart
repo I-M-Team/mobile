@@ -7,13 +7,15 @@ class Person {
   final String photoUrl;
   final String level;
   final int points;
+  final Map<String, int> eventsProgress;
 
   Person.create(this.path, this.name, this.email, this.photoUrl)
       : level = 'Новичок',
-        points = 0;
+        points = 0,
+        eventsProgress = {};
 
   Person(
-      this.path, this.name, this.email, this.photoUrl, this.level, this.points);
+      this.path, this.name, this.email, this.photoUrl, this.level, this.points, this.eventsProgress);
 
   String get nameOrEmail => name.isEmpty ? email : name;
 
@@ -26,6 +28,7 @@ class Person {
       json['photoUrl'] as String? ?? '',
       json['level'] as String? ?? '',
       json['points'] as int? ?? 0,
+      json['eventsProgress'] as Map<String, int>? ?? {},
     );
   }
 
@@ -36,5 +39,6 @@ class Person {
         'level': level,
         'points': points,
         'created_at': Timestamp.now(),
+        'eventsProgress': eventsProgress,
       };
 }

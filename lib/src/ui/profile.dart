@@ -1,4 +1,5 @@
 import 'package:app/extensions.dart';
+import 'package:app/src/resources/local_provider.dart';
 import 'package:app/src/vm/profile_vm.dart';
 import 'package:app/src/vm/vm.dart';
 import 'package:app/widgets.dart';
@@ -17,14 +18,49 @@ class _ProfilePageState extends ViewModelState<ProfileViewModel, ProfilePage> {
   Widget build(BuildContext context) {
     return FullScreen(
       padding: EdgeInsets.only(bottom: context.theme.bottomInset),
-      appBar: AppBar(),
+      appBar: AppBar(elevation: 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // todo add my questions
           // todo add my answers
           Observer(builder: (context) {
-            return Text('ANSWERS: ${vm.answersCount.value}');
+            return Material(
+              elevation: 6,
+              color: context.theme.colorScheme.primary,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(
+                        child: Column(
+                            children: [
+                              Text("Мой уровень"),
+                              Text(vm.getLevel().name),
+                            ]
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                            children: [
+                              Text("Вопросов"),
+                              Text("5"),
+                            ]
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                            children: [
+                              Text("Ответов"),
+                              Text("10"),
+                            ]
+                        ),
+                      )
+                    ]
+                ),
+              ),
+            );
           }),
           Spacer(),
           Container(

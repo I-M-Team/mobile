@@ -122,3 +122,22 @@ class Reaction extends Personalized {
         'created_at': Timestamp.now(),
       };
 }
+
+class Event {
+  final String id;
+  final String name;
+  final String icon;
+  final String content;
+  final int conditions;
+  final int award;
+
+  Event(this.id, this.name, this.icon, this.content, this.conditions, this.award);
+}
+
+class Level {
+  final int number;
+  final String name;
+  final List<String> events;
+
+  Level(this.number, this.name, this.events);
+}

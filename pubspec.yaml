@@ -68,14 +68,15 @@ dev_dependencies:
 flutter_native_splash:
   image: assets/splash.png
   color: "#ffffff"
-  image_dark: assets/splash-invert.png
-  color_dark: "#1c1c1e"
+  image_dark: assets/splash_invert.png
+  color_dark: "#000000"
   fullscreen: false
 
 flutter:
   uses-material-design: true
 
   assets:
+    - assets/
     - images/
 
 flutter_intl:

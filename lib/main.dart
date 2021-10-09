@@ -81,7 +81,7 @@ class _AppState extends ViewModelState<MainViewModel, App> {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: HomePage.show(),
       localizationsDelegates: [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

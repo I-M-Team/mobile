@@ -1,21 +1,35 @@
+import 'dart:ui';
+
 import 'package:app/extensions.dart';
 import 'package:app/main.dart';
+import 'package:app/src/models/models.dart';
 import 'package:app/src/ui/profile.dart';
 import 'package:app/src/vm/profile_vm.dart';
+import 'package:app/src/resources/repository.dart';
+import 'package:app/src/resources/images.dart';
+import 'package:app/src/vm/home_vm.dart';
 import 'package:app/src/vm/vm.dart';
 import 'package:app/src/widgets/user_avatar.dart';
 import 'package:app/widgets.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+  HomePage._({Key? key}) : super(key: key);
+
+  static Widget show() => Provider(
+    create: (c) => HomeViewModel(c.read<Repository>()),
+    child: HomePage._(),
+  );
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends ViewModelState<MainViewModel, HomePage> {
+class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
   Widget build(BuildContext context) {
+
+
+
     return FullScreen(
       appBar: AppBar(
         actions: [
@@ -40,7 +54,16 @@ class _HomePageState extends ViewModelState<MainViewModel, HomePage> {
         ],
       ),
       padding: EdgeInsets.zero,
-      child: null,
+      child: Observer(
+        builder: (context) {
+          return ListView.builder(
+            itemCount: vm.questions.value.length,
+            itemBuilder: (context, index) {
+              return _buildHomeItem(context, vm.questions.value[index]);
+            },
+          );
+        }
+      ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
@@ -51,4 +74,51 @@ class _HomePageState extends ViewModelState<MainViewModel, HomePage> {
       ),
     );
   }
+}
+
+Widget _buildHomeItem(BuildContext context, Question question) {
+
+  return GestureDetector(
+    onTap: () {},
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        child: Column(children: <Widget>[
+          Row(children: [
+            Image(image: IconAssets.profile),
+            SizedBox(width: 8.0),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Имя"),
+                Text("Уровень")
+              ]
+            )
+          ]),
+          SizedBox(height: 8.0),
+          Row(children: [
+            Text(question.content),
+          ]),
+          SizedBox(height: 16.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: () {},
+                child: Image(image: IconAssets.like),
+              ),
+              GestureDetector(
+                onTap: () {},
+                child: Image(image: IconAssets.comments),
+              ),
+              GestureDetector(
+                onTap: () {},
+                child: Image(image: IconAssets.accepted)
+              ),
+            ]
+          ),
+        ]),
+      ),
+    )
+  );
 }

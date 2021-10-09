@@ -73,11 +73,13 @@ class Answer extends Reactionable {
   // should handle links on shares
   final String content;
   final bool accepted;
+  final List<dynamic> tickers;
 
-  Answer(String path, this.personPath, this.content, this.accepted)
+  Answer(
+      String path, this.personPath, this.content, this.accepted, this.tickers)
       : super(path, personPath);
 
-  Answer.create(this.personPath, this.content)
+  Answer.create(this.personPath, this.content, this.tickers)
       : accepted = false,
         super('', personPath);
 
@@ -88,12 +90,14 @@ class Answer extends Reactionable {
       (json['person'] as DocumentReference?)?.path ?? '',
       json['content'] as String? ?? '',
       json['accepted'] as bool? ?? false,
+      json['tickers'] as List<dynamic>? ?? [],
     );
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'person': FirebaseFirestore.instance.doc(personPath),
         'content': content,
+        'tickers': tickers,
         'accepted': accepted,
         'created_at': Timestamp.now(),
       };

@@ -1,19 +1,12 @@
-import 'package:app/src/models/models.dart';
-import 'package:app/src/models/person_models.dart';
 import 'package:app/src/resources/repository.dart';
 import 'package:app/src/vm/vm.dart';
 
 class AddQuestionViewModel extends ViewModel {
   final Repository _repository;
 
-  final Observable<Person?> person;
+  final content = Observable('');
 
-  AddQuestionViewModel(this._repository)
-      : person = _repository.currentPerson().toObservable(null);
+  AddQuestionViewModel(this._repository);
 
-  void addQuestion(String content) =>
-      _repository.createQuestion(
-          content,
-          content.split(' ').where((str) => str.startsWith('#')).toList()
-      );
+  void create() => _repository.createQuestion(content.value);
 }

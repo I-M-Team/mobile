@@ -51,8 +51,8 @@ class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
         ],
       ),
       padding: EdgeInsets.zero,
-      child: Observer(builder: (context) {
-        return ListView.builder(
+      child: Observer(
+        builder: (context) => ListView.builder(
           itemCount: vm.questions.value.length,
           itemBuilder: (context, index) => QuestionWidget(
             item: vm.questions.value[index],
@@ -67,8 +67,8 @@ class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
               }
             },
           ),
-        );
-      }),
+        ),
+      ),
       floatingActionButton: Consumer<ProfileViewModel>(
         builder: (context, vm, child) => FloatingActionButton(
           child: Icon(Icons.add),
@@ -96,68 +96,71 @@ class QuestionWidget extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
       child: Card(
-        child: InkWell(
-          onTap: () => onTap?.call(item),
-          child: Observer(
-            builder: (context) => Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      Observer(
-                        builder: (context) => Row(
-                          children: [
-                            UserAvatar(
-                              initials: item.person().value?.nameOrEmail,
-                              url: item.person().value?.photoUrl,
-                              radius: 16,
-                            ),
-                            SizedBox(width: 8.0),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text((item.person().value?.nameOrEmail)
-                                    .orDefault()),
-                                Text(
-                                  (item.person().value?.level).orDefault(),
-                                  style: context.theme.textTheme.caption,
-                                ),
-                              ],
-                            )
-                          ],
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: InkWell(
+            onTap: () => onTap?.call(item),
+            child: Observer(
+              builder: (context) => Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Observer(
+                          builder: (context) => Row(
+                            children: [
+                              UserAvatar(
+                                initials: item.person().value?.nameOrEmail,
+                                url: item.person().value?.photoUrl,
+                                radius: 16,
+                              ),
+                              SizedBox(width: 8.0),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text((item.person().value?.nameOrEmail)
+                                      .orDefault()),
+                                  Text(
+                                    (item.person().value?.level).orDefault(),
+                                    style: context.theme.textTheme.caption,
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 8.0),
+                        SizedBox(
+                          width: double.infinity,
+                          child: Text(item.content),
+                        ),
+                        SizedBox(height: 8.0),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      IconButton(
+                        onPressed: item.availability().value ==
+                                Availability.unavailable
+                            ? null
+                            : () => action(item, item.availability().value),
+                        icon: Icon(
+                          item.availability().value !=
+                                  Availability.available_negation
+                              ? Icons.thumb_up_outlined
+                              : Icons.thumb_up,
                         ),
                       ),
-                      SizedBox(height: 8.0),
-                      SizedBox(
-                        width: double.infinity,
-                        child: Text(item.content),
-                      ),
-                      SizedBox(height: 8.0),
+                      if (item.reactionCount().value > 0)
+                        Text(
+                          '${item.reactionCount().value}',
+                          style: context.theme.textTheme.caption,
+                        ),
                     ],
                   ),
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                      onPressed:
-                          item.availability().value == Availability.unavailable
-                              ? null
-                              : () => action(item, item.availability().value),
-                      icon: Icon(
-                        item.availability().value !=
-                                Availability.available_negation
-                            ? Icons.thumb_up_outlined
-                            : Icons.thumb_up,
-                      ),
-                    ),
-                    if (item.reactionCount().value > 0)
-                      Text(
-                        '${item.reactionCount().value}',
-                        style: context.theme.textTheme.caption,
-                      ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

@@ -1,29 +1,30 @@
 import 'package:app/extensions.dart';
+import 'package:app/src/models/models.dart';
 import 'package:app/src/resources/repository.dart';
-import 'package:app/src/vm/add_question_vm.dart';
+import 'package:app/src/vm/add_answer_vm.dart';
 import 'package:app/src/vm/vm.dart';
 import 'package:app/widgets.dart';
 import 'package:flutter/material.dart';
 
-class AddQuestionPage extends StatefulWidget {
-  AddQuestionPage._({Key? key}) : super(key: key);
+class AddAnswerPage extends StatefulWidget {
+  AddAnswerPage._({Key? key}) : super(key: key);
 
-  static Widget show() => Provider(
-        create: (c) => AddQuestionViewModel(c.read<Repository>()),
-        child: AddQuestionPage._(),
+  static Widget show(Question target) => Provider(
+        create: (c) => AddAnswerViewModel(c.read<Repository>(), target),
+        child: AddAnswerPage._(),
       );
 
   @override
-  _AddQuestionPageState createState() => _AddQuestionPageState();
+  _AddAnswerPageState createState() => _AddAnswerPageState();
 }
 
-class _AddQuestionPageState
-    extends ViewModelState<AddQuestionViewModel, AddQuestionPage> {
+class _AddAnswerPageState
+    extends ViewModelState<AddAnswerViewModel, AddAnswerPage> {
   Widget build(BuildContext context) {
     return FullScreen(
       padding: EdgeInsets.only(bottom: context.theme.bottomInset),
       appBar: AppBar(
-        title: Text("Новый вопрос".orDefault()),
+        title: Text("Новый ответ".orDefault()),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -37,8 +38,7 @@ class _AddQuestionPageState
               keyboardType: TextInputType.multiline,
               maxLines: null,
               decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
-                  labelText: 'Задайте свой вопрос'),
+                  border: UnderlineInputBorder(), labelText: 'Ответ'),
             ),
             Spacer(),
             Container(
@@ -52,7 +52,7 @@ class _AddQuestionPageState
                 },
                 icon: Icon(Icons.add),
                 label: Text(
-                  'Отправить вопрос'.orDefault(),
+                  'Отправить'.orDefault(),
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                 ),
               ),

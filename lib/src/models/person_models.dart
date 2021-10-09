@@ -7,7 +7,8 @@ class Person {
   final String photoUrl;
   final String level;
 
-  Person.create(this.path, this.name, this.email, this.photoUrl) : level = '';
+  Person.create(this.path, this.name, this.email, this.photoUrl)
+      : level = 'Новичок';
 
   Person(this.path, this.name, this.email, this.photoUrl, this.level);
 
@@ -28,6 +29,7 @@ class Person {
         'name': name,
         'email': email,
         'photoUrl': photoUrl,
+        'level': level,
         'created_at': Timestamp.now(),
       };
 }

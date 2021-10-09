@@ -32,9 +32,15 @@ class Repository {
 
   void logout() => provider.signOut();
 
-  void createQuestion(String content, List<String> tickers) =>
-      provider.currentPersonPath?.let((it) =>
-          provider.upsertQuestion(Question.create(it, content, tickers)));
+  void createQuestion(String content) => provider.currentPersonPath?.let((it) =>
+      provider.upsertQuestion(Question.create(it, content,
+          content.split(' ').filter((str) => str.startsWith('#')))));
 
   Stream<List<Question>> questions() => provider.questions();
+
+  void createAnswer(Question target, String content) =>
+      provider.currentPersonPath?.let((it) => provider.upsertAnswer(
+          target,
+          Answer.create(it, content,
+              content.split(' ').filter((str) => str.startsWith('#')))));
 }

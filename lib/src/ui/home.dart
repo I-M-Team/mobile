@@ -137,29 +137,29 @@ class QuestionWidget extends StatelessWidget {
                           width: double.infinity,
                           child: Text(item.content),
                         ),
-                        SizedBox(height: 8.0),
                       ],
                     ),
                   ),
-                  Column(
-                    children: [
-                      IconButton(
-                        onPressed:
-                            item.availability().value == Availability.owner
-                                ? null
-                                : () => action(item, item.availability().value),
-                        icon: Icon(
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: item.availability().value == Availability.owner
+                        ? null
+                        : () => action(item, item.availability().value),
+                    icon: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
                           item.availability().value != Availability.reacted
                               ? Icons.thumb_up_outlined
                               : Icons.thumb_up,
                         ),
-                      ),
-                      if (item.reactionCount().value > 0)
-                        Text(
-                          '${item.reactionCount().value}',
-                          style: context.theme.textTheme.caption,
-                        ),
-                    ],
+                        if (item.reactionCount().value > 0)
+                          Text(
+                            '${item.reactionCount().value}',
+                            style: context.theme.textTheme.caption,
+                          ),
+                      ],
+                    ),
                   ),
                 ],
               ),

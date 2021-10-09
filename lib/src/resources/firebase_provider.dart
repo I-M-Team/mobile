@@ -99,7 +99,8 @@ class FirebaseProvider {
   }
 
   Future<void> createPerson(Person person) {
-    return _doc(person.path).set(person.toJson(), SetOptions(merge: true));
+    return _doc(person.path).get().then(
+        (value) => value.exists ? null : value.reference.set(person.toJson()));
   }
 
   Stream<Person?> currentPerson() {
@@ -170,17 +171,20 @@ class FirebaseProvider {
   }
 
   Future<void> acceptAnswer(Answer item, bool value) {
-    // todo should check is owner of question
-    return _doc(item.path).set({'accepted': value}, SetOptions(merge: true));
+    return _doc(item.path)
+        .set({'accepted': value}, SetOptions(merge: true)).then((it) =>
+            item.personPath == currentPersonPath
+                ? null
+                : addPoints(item.personPath, value ? 5 : -5));
   }
 
-  Stream<List<Reaction>> reactions(Doc item) {
+  Stream<List<Reaction>> reactions(Reactionable item) {
     return _reactions(item.path)
         .snapshots()
         .map((event) => event.docs.mapToList((e) => Reaction.fromSnapshot(e)));
   }
 
-  static Stream<int> reactionCount(Doc item) {
+  static Stream<int> reactionCount(Reactionable item) {
     return _reactions(item.path).snapshots().map((event) => event.size);
   }
 
@@ -199,13 +203,23 @@ class FirebaseProvider {
     var id = _auth.currentUser?.uid;
     return _reactions(target.path)
         .doc(id)
-        .set(Reaction.create(_users.doc(id).path).toJson());
+        .set(Reaction.create(_users.doc(id).path).toJson())
+        .then((value) => addPoints(target.personPath, 1));
   }
 
   Future<void> removeReaction(Reactionable target) {
     // todo should use !isReactionAvailable before execution
     var id = _auth.currentUser?.uid;
-    return _reactions(target.path).doc(id).delete();
+    return _reactions(target.path)
+        .doc(id)
+        .delete()
+        .then((value) => addPoints(target.personPath, -1));
+  }
+
+  Future<void> addPoints(String personPath, int count) {
+    return _doc(personPath).set({
+      'points': FieldValue.increment(count),
+    }, SetOptions(merge: true));
   }
 }
 

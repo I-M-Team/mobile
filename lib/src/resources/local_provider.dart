@@ -16,7 +16,7 @@ class LocalProvider {
     Event(
       "2",
       "Кто я?",
-      "test",
+      "https://www.podpisnie.ru/upload/resize_images/21105895/classic_312x460_21105895.jpeg",
       "Пройти опрос на определение уровня знаний в инвестировании.",
       1,
       10,
@@ -32,7 +32,7 @@ class LocalProvider {
     Event(
       "4",
       "Выход из тени",
-      "avatar",
+      "https://stihi.ru/pics/2019/03/20/9111.jpg",
       "Заполнить профиль с помощью входа через гугл или просто укажите имя.",
       1,
       15,
@@ -48,7 +48,7 @@ class LocalProvider {
     Event(
       "6",
       "Первый пошел",
-      "question",
+      "https://cs8.pikabu.ru/post_img/big/2016/10/31/7/1477914465176825297.jpg",
       "Задать свой первый вопрос и получить за него лайк.",
       1,
       20,
@@ -56,7 +56,7 @@ class LocalProvider {
     Event(
       "7",
       "Согласовано",
-      "accepted",
+      "https://xn--80aaeffd9darq5b.xn--p1ai/uploads/reksog200.png?1568126661128",
       "Выбрать наилучший ответ на свой вопрос, который больше всего вам помог.",
       1,
       5,
@@ -72,7 +72,7 @@ class LocalProvider {
     Event(
       "9",
       "Больше лайков",
-      "thumbs_up",
+      "https://www.film.ru/sites/default/files/images/01(229).jpg",
       "Лайкнуть комментарии в трёх различных вопросах.",
       3,
       5,
@@ -80,7 +80,7 @@ class LocalProvider {
     Event(
       "10",
       "Хороший вопрос",
-      "thumbs_up",
+      "https://image.shutterstock.com/image-vector/thats-good-question-retro-speech-260nw-381206650.jpg",
       "Лайкнуть чужой вопрос, который больше всего нравится.",
       1,
       5,
@@ -88,15 +88,15 @@ class LocalProvider {
     Event(
       "11",
       "Отвечают знатоки",
-      "question",
+      "https://www.workle.ru/s3storage/commonfiles/e74f0a11-3636-4830-81d0-9c002bd79d45.jpg",
       "Ответить на чужой вопрос и получить за него лайк.",
       1,
       15,
     ),
     Event(
       "12",
-      "Отвечает Друздь",
-      "question",
+      "Отвечает Друзь",
+      "https://media.nakanune.ru/images/pictures/image_big_157455.jpg",
       "Ответить на чужой вопрос и получить Accepted.",
       1,
       30,
@@ -104,7 +104,7 @@ class LocalProvider {
     Event(
       "13",
       "Демо",
-      "demo",
+      "https://lh3.googleusercontent.com/proxy/_YPDb8F4gb-MBUt8ZrmVwVcFqU0KISM3WLE0bgNq4Xl2nndf_HDvzbT9_b0mtS9XreuTNh5KgTYaL5UwcIw39p6abaX2rLrlaU8wdFNm0FqqUB4W9VRzcjAQC7wCiN5mIUXQRK_LyYg",
       "Открыть демо-счет в Инвестициях ВТБ.",
       1,
       50,
@@ -112,7 +112,7 @@ class LocalProvider {
     Event(
       "14",
       "VTB",
-      "vtb",
+      "https://s3-symbol-logo.tradingview.com/vtbr--600.png",
       "Задать вопрос про акции #VTBR и получить за него лайк.",
       1,
       50,
@@ -128,17 +128,17 @@ class LocalProvider {
     Level(
       1,
       "Начинающий инвестор",
-      ["0", "1", "2", "3"],
+      ["1", "2", "3", "4"],
     ),
     Level(
       2,
       "Опытный инвестор",
-      ["4", "5", "6"],
+      ["5", "6", "7", "8"],
     ),
     Level(
       3,
       "Мегасупер инвестор",
-      ["7", "8", "9", "10", "11"],
+      ["9", "10", "11", "12", "13", "14"],
     )
   ];
 }

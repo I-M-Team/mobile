@@ -60,13 +60,15 @@ class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
         1: buildMissions,
         2: buildLeaderboard,
       }),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          context.tryAuthorized(() =>
-              context.navigator.pushPage((context) => AddQuestionPage.show()));
-        },
-      ),
+      floatingActionButton: _currentPage != 0
+          ? null
+          : FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: () {
+                context.tryAuthorized(() => context.navigator
+                    .pushPage((context) => AddQuestionPage.show()));
+              },
+            ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentPage,
         onTap: (i) => setState(() => _currentPage = i),
@@ -136,6 +138,8 @@ class _MissionsSectionState
   }
 
   Widget buildItem(Event item) {
+    print(
+        'events=${vm.person.value?.getNextLevel().events} id=${item.id} contains=${vm.person.value?.getNextLevel().events.contains(item.id)}');
     return Opacity(
       opacity:
           (vm.person.value?.getNextLevel().events.contains(item.id)).orDefault()
@@ -152,6 +156,7 @@ class _MissionsSectionState
                   radius: 40,
                   url: item.icon,
                   initials: '-',
+                  showHolder: false,
                 ),
                 SizedBox(width: 8),
                 Expanded(

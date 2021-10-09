@@ -8,12 +8,14 @@ class UserAvatar extends StatelessWidget {
   final double radius;
   final String? initials;
   final Widget? cover;
+  final bool showHolder;
 
   UserAvatar({
     Key? key,
     required this.url,
     required this.radius,
     required String? initials,
+    this.showHolder = true,
     this.cover,
   })  : initials = initials?.initials(),
         super(key: key);
@@ -22,24 +24,26 @@ class UserAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final holder = initials.isNullOrEmpty
-        ? Icon(
-            CupertinoIcons.person,
-            size: radius,
-            color: context.theme.textTheme.caption?.color,
-          )
-        : Padding(
-            padding: EdgeInsets.only(top: 1.5),
-            child: Text(
-              initials.orDefault(),
-              style: context.theme.textTheme.subtitle2?.copyWith(
-                fontSize: radius * 0.75,
-                color: backgroundColor.brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white,
-              ),
-            ),
-          );
+    final holder = !showHolder
+        ? null
+        : initials.isNullOrEmpty
+            ? Icon(
+                CupertinoIcons.person,
+                size: radius,
+                color: context.theme.textTheme.caption?.color,
+              )
+            : Padding(
+                padding: EdgeInsets.only(top: 1.5),
+                child: Text(
+                  initials.orDefault(),
+                  style: context.theme.textTheme.subtitle2?.copyWith(
+                    fontSize: radius * 0.75,
+                    color: backgroundColor.brightness == Brightness.light
+                        ? Colors.black
+                        : Colors.white,
+                  ),
+                ),
+              );
 
     return url.isNullOrEmpty
         ? _container(context, holder: holder)

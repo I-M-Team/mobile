@@ -3,6 +3,7 @@ import 'package:app/main.dart';
 import 'package:app/src/models/models.dart';
 import 'package:app/src/resources/repository.dart';
 import 'package:app/src/ui/profile.dart';
+import 'package:app/src/ui/question.dart';
 import 'package:app/src/vm/home_vm.dart';
 import 'package:app/src/vm/profile_vm.dart';
 import 'package:app/src/vm/vm.dart';
@@ -53,8 +54,19 @@ class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
       child: Observer(builder: (context) {
         return ListView.builder(
           itemCount: vm.questions.value.length,
-          itemBuilder: (context, index) =>
-              _buildHomeItem(context, vm.questions.value[index]),
+          itemBuilder: (context, index) => QuestionWidget(
+            item: vm.questions.value[index],
+            onTap: (item) {
+              context.navigator.pushPage((context) => QuestionPage.show(item));
+            },
+            action: (item, a) {
+              if (a == Availability.available) {
+                vm.reaction(item);
+              } else {
+                vm.removeReaction(item);
+              }
+            },
+          ),
         );
       }),
       floatingActionButton: Consumer<ProfileViewModel>(
@@ -68,65 +80,86 @@ class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
       ),
     );
   }
+}
 
-  Widget _buildHomeItem(BuildContext context, Question item) {
+class QuestionWidget extends StatelessWidget {
+  final Question item;
+  final void Function(Question item)? onTap;
+  final void Function(Question item, Availability a) action;
+
+  const QuestionWidget(
+      {Key? key, required this.item, required this.action, this.onTap})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
       child: Card(
         child: InkWell(
-          onTap: () {},
+          onTap: () => onTap?.call(item),
           child: Observer(
-              builder: (context) => ListTile(
-                    trailing:
-                        item.availability().value == Availability.unavailable
-                            ? null
-                            : IconButton(
-                                onPressed: () {
-                                  if (item.availability().value ==
-                                      Availability.available) {
-                                    vm.reaction(item);
-                                  } else {
-                                    vm.removeReaction(item);
-                                  }
-                                },
-                                icon: Icon(
-                                  item.availability().value ==
-                                          Availability.available
-                                      ? Icons.thumb_up_outlined
-                                      : Icons.thumb_up,
+            builder: (context) => Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    children: <Widget>[
+                      Observer(
+                        builder: (context) => Row(
+                          children: [
+                            UserAvatar(
+                              initials: item.person().value?.nameOrEmail,
+                              url: item.person().value?.photoUrl,
+                              radius: 16,
+                            ),
+                            SizedBox(width: 8.0),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text((item.person().value?.nameOrEmail)
+                                    .orDefault()),
+                                Text(
+                                  (item.person().value?.level).orDefault(),
+                                  style: context.theme.textTheme.caption,
                                 ),
-                              ),
-                    title: Column(
-                      children: <Widget>[
-                        Observer(
-                          builder: (context) => Row(
-                            children: [
-                              UserAvatar(
-                                initials: item.person().value?.nameOrEmail,
-                                url: item.person().value?.photoUrl,
-                                radius: 16,
-                              ),
-                              SizedBox(width: 8.0),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text((item.person().value?.nameOrEmail)
-                                      .orDefault()),
-                                  Text(
-                                    (item.person().value?.level).orDefault(),
-                                    style: context.theme.textTheme.caption,
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
+                              ],
+                            )
+                          ],
                         ),
-                        SizedBox(height: 8.0),
-                        Text(item.content),
-                        SizedBox(height: 8.0),
-                      ],
+                      ),
+                      SizedBox(height: 8.0),
+                      SizedBox(
+                        width: double.infinity,
+                        child: Text(item.content),
+                      ),
+                      SizedBox(height: 8.0),
+                    ],
+                  ),
+                ),
+                Column(
+                  children: [
+                    IconButton(
+                      onPressed:
+                          item.availability().value == Availability.unavailable
+                              ? null
+                              : () => action(item, item.availability().value),
+                      icon: Icon(
+                        item.availability().value !=
+                                Availability.available_negation
+                            ? Icons.thumb_up_outlined
+                            : Icons.thumb_up,
+                      ),
                     ),
-                  )),
+                    if (item.reactionCount().value > 0)
+                      Text(
+                        '${item.reactionCount().value}',
+                        style: context.theme.textTheme.caption,
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

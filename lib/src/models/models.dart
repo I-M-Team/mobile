@@ -22,10 +22,13 @@ class Personalized extends Doc {
 
 class Reactionable extends Personalized {
   late final Lazy<Observable<Availability>> availability;
+  late final Lazy<Observable<int>> reactionCount;
 
   Reactionable(String path, String personPath) : super(path, personPath) {
     availability = Lazy(() => FirebaseProvider.isReactionAvailable(this)
         .toObservable(Availability.unavailable));
+    reactionCount =
+        Lazy(() => FirebaseProvider.reactionCount(this).toObservable(0));
   }
 }
 
@@ -43,7 +46,8 @@ class Question extends Reactionable {
   Question(String path, String personPath, this.content, this.tickers)
       : super(path, personPath);
 
-  Question.create(String personPath, this.content, this.tickers) : super('', personPath);
+  Question.create(String personPath, this.content, this.tickers)
+      : super('', personPath);
 
   factory Question.fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {

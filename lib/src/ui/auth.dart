@@ -22,12 +22,36 @@ class AuthPage extends StatefulWidget {
 class _AuthPageState extends ViewModelState<AuthViewModel, AuthPage> {
   Widget build(BuildContext context) {
     return FullScreen(
-      padding: EdgeInsets.zero,
+      appBar: AppBar(),
+      padding: EdgeInsets.only(bottom: context.theme.bottomInset),
       resizeToAvoidBottomInset: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(Icons.ac_unit, size: 60),
+          SizedBox(height: 40),
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: TextFormField(
+              initialValue: vm.name.value,
+              onChanged: (value) => vm.name.set(value),
+              textCapitalization: TextCapitalization.words,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                labelText: 'Name',
+                labelStyle: TextStyle(
+                    color:
+                        context.theme.colorScheme.onSurface.withOpacity(0.6)),
+              ),
+            ),
+          ),
+          Observer(
+            builder: (context) => _buildSocialButton(
+              icon: Icon(Icons.login),
+              title: context.strings.register,
+              onTap: vm.name.value.isEmpty ? null : _login(vm.anonAuth),
+            ),
+          ),
+          Spacer(),
           _buildSocialButton(
             icon: Image(image: IconAssets.google),
             title: context.strings.googleAuth,

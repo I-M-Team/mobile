@@ -12,9 +12,11 @@ import 'package:app/src/vm/vm.dart';
 import 'package:app/widgets.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
+  debugPaintSizeEnabled = true;
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();

@@ -36,6 +36,28 @@ class FirebaseProvider {
 
   Stream<bool> isAuthorized() => currentPerson().map((it) => it != null);
 
+  Future<void> signInAnon(String name) async {
+    var user = _auth.currentUser;
+    if (user == null) {
+      final result = await _auth.signInAnonymously();
+      user = result.user;
+      print("Signed in ${user?.uid}");
+    } else {
+      print("Already authed ${user.uid}");
+    }
+
+    if (user != null) {
+      return createPerson(Person.create(
+        'users/${user.uid}',
+        name,
+        '',
+        '',
+      ));
+    } else {
+      throw AuthCanceled();
+    }
+  }
+
   Future<void> signInGoogle() async {
     printLog(() => 'Starting google sign in');
     final googleUser = await _googleSignIn.signIn();
@@ -58,7 +80,7 @@ class FirebaseProvider {
     printLog(() => "Signed in with google ${user?.uid}");
 
     if (user != null) {
-      createPerson(Person.create(
+      return createPerson(Person.create(
         'users/${user.uid}',
         googleUser.displayName.orDefault(),
         googleUser.email,
@@ -93,6 +115,10 @@ class FirebaseProvider {
   static Stream<Person?> person(String path) {
     return _doc(path).snapshots().map((json) =>
         json.takeIf((it) => it.exists)?.let((it) => Person.fromSnapshot(it)));
+  }
+
+  Stream<Question> question(String path) {
+    return _doc(path).snapshots().map((event) => Question.fromSnapshot(event));
   }
 
   Stream<List<Question>> questions() {
@@ -152,7 +178,7 @@ class FirebaseProvider {
         .map((event) => event.docs.mapToList((e) => Reaction.fromSnapshot(e)));
   }
 
-  Stream<int> reactionCount(Doc item) {
+  static Stream<int> reactionCount(Doc item) {
     return _reactions(item.path).snapshots().map((event) => event.size);
   }
 

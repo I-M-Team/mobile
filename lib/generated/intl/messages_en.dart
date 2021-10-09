@@ -33,6 +33,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Server unavailable, please check your internet connection"),
         "no": MessageLookupByLibrary.simpleMessage("No"),
         "notFound": MessageLookupByLibrary.simpleMessage("Item not found"),
-        "ok": MessageLookupByLibrary.simpleMessage("Ok")
+        "ok": MessageLookupByLibrary.simpleMessage("Ok"),
+        "register": MessageLookupByLibrary.simpleMessage("Register")
       };
 }

@@ -5,8 +5,11 @@ class Person {
   final String name;
   final String email;
   final String photoUrl;
+  final String level;
 
-  Person(this.path, this.name, this.email, this.photoUrl);
+  Person.create(this.path, this.name, this.email, this.photoUrl) : level = '';
+
+  Person(this.path, this.name, this.email, this.photoUrl, this.level);
 
   String get nameOrEmail => name.isEmpty ? email : name;
 
@@ -17,6 +20,7 @@ class Person {
       json['name'] as String? ?? '',
       json['email'] as String? ?? '',
       json['photoUrl'] as String? ?? '',
+      json['level'] as String? ?? '',
     );
   }
 

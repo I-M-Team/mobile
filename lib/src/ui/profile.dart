@@ -21,6 +21,8 @@ class _ProfilePageState extends ViewModelState<ProfileViewModel, ProfilePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          // todo add my questions
+          // todo add my answers
           Spacer(),
           Container(
             width: double.infinity,

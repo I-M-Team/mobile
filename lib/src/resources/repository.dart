@@ -1,6 +1,7 @@
 import 'package:app/async.dart';
-import 'package:app/src/models/person_models.dart';
+import 'package:app/extensions.dart';
 import 'package:app/src/models/models.dart';
+import 'package:app/src/models/person_models.dart';
 import 'package:app/src/resources/firebase_provider.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -24,6 +25,9 @@ class Repository {
   Stream<Person?> currentPerson() => _provider.currentPerson();
 
   void logout() => _provider.signOut();
+
+  void createQuestion(String content) => _provider.currentPersonPath
+      ?.let((it) => _provider.upsertQuestion(Question.create(it, content)));
 
   Stream<List<Question>> questions() => _provider.questions();
 }

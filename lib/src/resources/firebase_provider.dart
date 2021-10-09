@@ -29,6 +29,11 @@ class FirebaseProvider {
   static CollectionReference<Map<String, dynamic>> _reactions(String path) =>
       _doc(path).collection('reactions');
 
+  String? get currentPersonId => _auth.currentUser?.uid;
+
+  String? get currentPersonPath =>
+      currentPersonId?.let((it) => _users.doc(it).path);
+
   Stream<bool> isAuthorized() => currentPerson().map((it) => it != null);
 
   Future<void> signInGoogle() async {
@@ -53,7 +58,7 @@ class FirebaseProvider {
     printLog(() => "Signed in with google ${user?.uid}");
 
     if (user != null) {
-      createPerson(Person(
+      createPerson(Person.create(
         'users/${user.uid}',
         googleUser.displayName.orDefault(),
         googleUser.email,
@@ -71,8 +76,8 @@ class FirebaseProvider {
         .then((_) => printLog(() => 'Signed Out!'));
   }
 
-  void createPerson(Person person) {
-    _doc(person.path).set(person.toJson(), SetOptions(merge: true));
+  Future<void> createPerson(Person person) {
+    return _doc(person.path).set(person.toJson(), SetOptions(merge: true));
   }
 
   Stream<Person?> currentPerson() {
@@ -85,10 +90,28 @@ class FirebaseProvider {
         );
   }
 
+  static Stream<Person?> person(String path) {
+    return _doc(path).snapshots().map((json) =>
+        json.takeIf((it) => it.exists)?.let((it) => Person.fromSnapshot(it)));
+  }
+
   Stream<List<Question>> questions() {
     return _questions
         .snapshots()
         .map((event) => event.docs.mapToList((e) => Question.fromSnapshot(e)));
+  }
+
+  Stream<List<Question>> questionsFor(String query) {
+    return _questions
+        .where('tickers', arrayContains: query)
+        .snapshots()
+        .map((event) => event.docs.mapToList((e) => Question.fromSnapshot(e)));
+  }
+
+  Future<void> upsertQuestion(Question item) {
+    return item.path.isEmpty
+        ? _questions.add(item.toJson())
+        : _doc(item.path).set(item.toJson(), SetOptions(merge: true));
   }
 
   Stream<List<Answer>> answers(Question item) {
@@ -97,21 +120,71 @@ class FirebaseProvider {
         .map((event) => event.docs.mapToList((e) => Answer.fromSnapshot(e)));
   }
 
+  Stream<Availability> isAnswerAvailable(Question item) {
+    return _auth.authStateChanges().flatMapUntilNext((value) =>
+        _doc(item.personPath).id == value?.uid
+            ? Stream.value(Availability.owner)
+            : _answers(item.path).doc(value?.uid).snapshots().map((event) =>
+                event.exists
+                    ? Availability.unavailable
+                    : Availability.available));
+  }
+
+  Future<void> upsertAnswer(Question question, Answer item) {
+    // todo should use isAnswerAvailable before execution
+    return item.path.isEmpty
+        ? _answers(question.path).add(item.toJson())
+        : _doc(item.path).set(item.toJson(), SetOptions(merge: true));
+  }
+
+  Future<void> remove(Doc item) {
+    return _doc(item.path).delete();
+  }
+
+  Future<void> acceptAnswer(Answer item) {
+    // todo should check is owner of question
+    return _doc(item.path).set({'accepted': true}, SetOptions(merge: true));
+  }
+
   Stream<List<Reaction>> reactions(Doc item) {
     return _reactions(item.path)
         .snapshots()
         .map((event) => event.docs.mapToList((e) => Reaction.fromSnapshot(e)));
   }
 
-  Stream<bool> isReactionAvailable(Personalized item) {
-    return _auth.authStateChanges().flatMapUntilNext((value) =>
-        _doc(item.personPath).id == value?.uid
-            ? Stream.value(false)
-            : _reactions(item.path)
-                .doc(value?.uid)
-                .snapshots()
-                .map((event) => !event.exists));
+  Stream<int> reactionCount(Doc item) {
+    return _reactions(item.path).snapshots().map((event) => event.size);
   }
+
+  Stream<Availability> isReactionAvailable(Personalized target) {
+    return _auth.authStateChanges().flatMapUntilNext((value) =>
+        _doc(target.personPath).id == value?.uid
+            ? Stream.value(Availability.owner)
+            : _reactions(target.path).doc(value?.uid).snapshots().map((event) =>
+                event.exists
+                    ? Availability.unavailable
+                    : Availability.available));
+  }
+
+  Future<void> createReaction(Personalized target) {
+    // todo should use isReactionAvailable before execution
+    var id = _auth.currentUser?.uid;
+    return _reactions(target.path)
+        .doc(id)
+        .set(Reaction.create(_users.doc(id).path).toJson());
+  }
+
+  Future<void> removeReaction(Personalized target) {
+    // todo should use !isReactionAvailable before execution
+    var id = _auth.currentUser?.uid;
+    return _reactions(target.path).doc(id).delete();
+  }
+}
+
+enum Availability {
+  available,
+  unavailable,
+  owner,
 }
 
 class AuthCanceled implements Exception {

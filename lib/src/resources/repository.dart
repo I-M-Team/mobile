@@ -30,6 +30,8 @@ class Repository {
 
   Stream<Person?> currentPerson() => provider.currentPerson();
 
+  Stream<List<Person>> currentRating() => provider.currentRating();
+
   void logout() => provider.signOut();
 
   void createQuestion(String content) => provider.currentPersonPath?.let((it) =>

@@ -7,6 +7,7 @@ import 'package:app/src/resources/repository.dart';
 import 'package:app/src/ui/auth.dart';
 import 'package:app/src/ui/home.dart';
 import 'package:app/src/vm/profile_vm.dart';
+import 'package:app/src/vm/rating_vm.dart';
 import 'package:app/src/vm/vm.dart';
 import 'package:app/widgets.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,6 +26,7 @@ void main() async {
       Provider.value(value: repository),
       Provider(create: (c) => MainViewModel(repository)),
       Provider(create: (c) => ProfileViewModel(repository)),
+      Provider(create: (c) => RatingViewModel(repository)),
     ],
     child: App(),
   ));

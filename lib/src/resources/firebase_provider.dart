@@ -116,6 +116,13 @@ class FirebaseProvider {
         );
   }
 
+  Stream<List<Person>> currentRating() {
+    return _users
+        .orderBy('points', descending: true)
+        .snapshots()
+        .map((event) => event.docs.mapToList((e) => Person.fromSnapshot(e)));
+  }
+
   static Stream<Person?> person(String path) {
     return _doc(path).snapshots().map((json) =>
         json.takeIf((it) => it.exists)?.let((it) => Person.fromSnapshot(it)));

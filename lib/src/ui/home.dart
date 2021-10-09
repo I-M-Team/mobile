@@ -5,6 +5,7 @@ import 'package:app/src/resources/local_provider.dart';
 import 'package:app/src/resources/repository.dart';
 import 'package:app/src/ui/profile.dart';
 import 'package:app/src/ui/question.dart';
+import 'package:app/src/ui/rating.dart';
 import 'package:app/src/vm/home_vm.dart';
 import 'package:app/src/vm/profile_vm.dart';
 import 'package:app/src/vm/vm.dart';
@@ -111,7 +112,7 @@ class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
   }
 
   Widget buildLeaderboard() {
-    return Container();
+    return RatingPage.show();
   }
 }
 

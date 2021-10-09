@@ -1,4 +1,5 @@
 import 'package:app/extensions.dart';
+import 'package:app/src/resources/images.dart';
 import 'package:app/src/vm/profile_vm.dart';
 import 'package:app/src/vm/vm.dart';
 import 'package:app/src/widgets/user_avatar.dart';
@@ -90,6 +91,22 @@ class _ProfilePageState extends ViewModelState<ProfileViewModel, ProfilePage> {
               ),
             );
           }),
+          SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(children: [
+              Text(
+                "Количество бонусов: " + (vm.person.value?.points ?? 0).toString(),
+                style: context.theme.textTheme.headline5,
+              ),
+              SizedBox(height: 16),
+              Text(
+                "Вы можете обменять ваши бонусы на акции ведущих компаний в приложении ВТБ Мои Инвестиции. Открыть брокерский счёт в нём можно так же легко.",
+                style: context.theme.textTheme.bodyText1,
+                textAlign: TextAlign.center,
+              ),
+            ]),
+          ),
           Spacer(),
           Container(
             width: double.infinity,

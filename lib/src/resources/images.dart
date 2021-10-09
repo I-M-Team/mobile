@@ -8,6 +8,7 @@ abstract class IconAssets {
   static const AssetImage profile = AssetImage('images/person_solid.png');
   static const AssetImage like = AssetImage('images/thumbs_up_solid.png');
   static const AssetImage comments = AssetImage('images/chat_solid.png');
+  static const AssetImage vtbInvestor = AssetImage('images/vtb_investor.png');
 
   static const AssetImage test = AssetImage('images/test.png');
   static const AssetImage testDone = AssetImage('images/test_done.png');

@@ -1,7 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import 'intl/messages_all.dart';
 
 // **************************************************************************
@@ -81,10 +80,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Cancel`
+  /// `Отмена`
   String get cancel {
     return Intl.message(
-      'Cancel',
+      'Отмена',
       name: 'cancel',
       desc: '',
       args: [],
@@ -131,20 +130,20 @@ class AppLocalizations {
     );
   }
 
-  /// `Register`
+  /// `Регистрация`
   String get register {
     return Intl.message(
-      'Register',
+      'Регистрация',
       name: 'register',
       desc: '',
       args: [],
     );
   }
 
-  /// `Sign in with Google`
+  /// `Вход через Google`
   String get googleAuth {
     return Intl.message(
-      'Sign in with Google',
+      'Вход через Google',
       name: 'googleAuth',
       desc: '',
       args: [],

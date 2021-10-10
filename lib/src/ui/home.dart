@@ -40,58 +40,57 @@ class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
 
     _disposers = [
       reaction(
-          (p0) => context
-              .read<ProfileViewModel>()
-              .person
-              .value
-              ?.getNextLevelEvent(), (Event? nextLevelEvent) {
-        print('nextLevelEvent=${nextLevelEvent?.name}');
-        nextLevelEvent?.also((item) async {
-          await showDialog(
-            context: context,
-            builder: (context) => Dialog(
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AspectRatio(
-                      aspectRatio: 1.5,
-                      child: CachedNetworkImage(
-                        imageBuilder: (context, imageProvider) => Image(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
+        (p0) =>
+            context.read<ProfileViewModel>().person.value?.getNextLevelEvent(),
+        (Event? nextLevelEvent) {
+          nextLevelEvent?.also((item) async {
+            await showDialog(
+              context: context,
+              builder: (context) => Dialog(
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AspectRatio(
+                        aspectRatio: 1.5,
+                        child: CachedNetworkImage(
+                          imageBuilder: (context, imageProvider) => Image(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            color: context.theme.dividerColor,
+                          ),
+                          imageUrl: item.icon,
                         ),
-                        errorWidget: (context, url, error) => Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          color: context.theme.dividerColor,
-                        ),
-                        imageUrl: item.icon,
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      '${item.name}',
-                      style: context.theme.textTheme.headline6,
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      '${item.content}',
-                      style: context.theme.textTheme.subtitle1,
-                    ),
-                  ],
+                      SizedBox(height: 10),
+                      Text(
+                        '${item.name}',
+                        style: context.theme.textTheme.headline6,
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        '${item.content}',
+                        style: context.theme.textTheme.subtitle1,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-          print("alert closed");
-          if (["3"].contains(item.id)) {
-            vm.eventComplete(item);
-          }
-        });
-      }),
+            );
+            print("alert closed");
+            if (["3"].contains(item.id)) {
+              vm.eventComplete(item);
+            }
+          });
+        },
+        fireImmediately: true,
+      ),
     ];
   }
 
@@ -145,11 +144,10 @@ class _HomePageState extends ViewModelState<HomeViewModel, HomePage> {
         onTap: (i) => setState(() => _currentPage = i),
         items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.question_answer_outlined), label: 'Questions'),
+              icon: Icon(Icons.question_answer_outlined), label: 'Вопросы'),
+          BottomNavigationBarItem(icon: Icon(Icons.add_task), label: 'Задания'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.add_task), label: 'Missions'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.leaderboard_outlined), label: 'Leaderboard'),
+              icon: Icon(Icons.leaderboard_outlined), label: 'Рейтинг'),
         ],
       ),
     );

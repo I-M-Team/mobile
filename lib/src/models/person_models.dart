@@ -67,15 +67,15 @@ class Person {
   }
 
   factory Person.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot) {
-    var json = snapshot.data()!;
+    var json = snapshot.data();
     return Person(
       snapshot.reference.path,
-      json['name'] as String? ?? '',
-      json['email'] as String? ?? '',
-      json['photoUrl'] as String? ?? '',
-      json['level'] as String? ?? '',
-      json['points'] as int? ?? 0,
-      json['eventsProgress'] as Map<String, dynamic>? ?? {},
+      json?['name'] as String? ?? '',
+      json?['email'] as String? ?? '',
+      json?['photoUrl'] as String? ?? '',
+      json?['level'] as String? ?? '',
+      json?['points'] as int? ?? 0,
+      json?['eventsProgress'] as Map<String, dynamic>? ?? {},
     );
   }
 
@@ -84,7 +84,7 @@ class Person {
         'email': email,
         'photoUrl': photoUrl,
         'level': level,
-        'points': points,
+        // 'points': points,
         'created_at': Timestamp.now(),
       };
 }

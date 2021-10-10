@@ -33,4 +33,6 @@ class ProfileViewModel extends ViewModel {
   void eventComplete(Event event) {
     _repository.provider.currentPersonEvent(event: event);
   }
+
+  Future<String> getPersonPath() => _repository.provider.getPersonPath();
 }

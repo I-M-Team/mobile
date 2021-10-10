@@ -44,7 +44,8 @@ class FirebaseProvider {
     return currentPersonPath!;
   }
 
-  Stream<bool> isAuthorized() => currentPerson().map((it) => it != null);
+  Stream<bool> isAuthorized() =>
+      currentPerson().map((it) => (it?.nameOrEmail.isNotEmpty).orDefault());
 
   Future<void> signInAnon(String name, {bool create = true}) async {
     var user = _auth.currentUser;
@@ -111,25 +112,28 @@ class FirebaseProvider {
   }
 
   Future<void> createPerson(Person person) {
-    return _doc(person.path).get().then(
-        (value) => value.exists ? null : value.reference.set(person.toJson()));
+    return _doc(person.path).get().then((value) =>
+        value.exists && (value.data()?['level']?.isNotEmpty ?? false)
+            ? null
+            : value.reference.set(person.toJson(), SetOptions(merge: true)));
   }
 
   Stream<Person?> currentPerson() {
     return _auth.authStateChanges().flatMapUntilNext(
           (event) => event == null
               ? Stream.value(null)
-              : _users.doc(event.uid).snapshots().map((json) => json
-                  .takeIf((it) => it.exists)
-                  ?.let((it) => Person.fromSnapshot(it))),
+              : _users
+                  .doc(event.uid)
+                  .snapshots()
+                  .map((json) => Person.fromSnapshot(json)),
         );
   }
 
   Stream<List<Person>> currentRating() {
-    return _users
-        .orderBy('points', descending: true)
-        .snapshots()
-        .map((event) => event.docs.mapToList((e) => Person.fromSnapshot(e)));
+    return _users.orderBy('points', descending: true).snapshots().map((event) =>
+        event.docs
+            .mapToList((e) => Person.fromSnapshot(e))
+            .filter((event) => event.nameOrEmail.isNotEmpty));
   }
 
   static Stream<Person?> person(String path) {

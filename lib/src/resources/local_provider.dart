@@ -67,7 +67,7 @@ class LocalProvider {
     Event(
       "13",
       "Демо",
-      "https://lh3.googleusercontent.com/proxy/_YPDb8F4gb-MBUt8ZrmVwVcFqU0KISM3WLE0bgNq4Xl2nndf_HDvzbT9_b0mtS9XreuTNh5KgTYaL5UwcIw39p6abaX2rLrlaU8wdFNm0FqqUB4W9VRzcjAQC7wCiN5mIUXQRK_LyYg",
+      "http://2018.goldensite.ru/upload/iblock/c34/c342fd4ce072c97432491efd5e85b3db.png",
       "Открыть демо-счет в ВТБ Инвестиции.",
       1,
       50,

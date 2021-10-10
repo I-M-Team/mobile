@@ -22,18 +22,17 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "appName": MessageLookupByLibrary.simpleMessage("Core Spirit"),
-        "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "cancel": MessageLookupByLibrary.simpleMessage("Отмена"),
         "clear": MessageLookupByLibrary.simpleMessage("Clear"),
         "defaultSnackbarError": MessageLookupByLibrary.simpleMessage(
             "Something went wrong! We will be grateful if you tell us what happened"),
-        "googleAuth":
-            MessageLookupByLibrary.simpleMessage("Sign in with Google"),
+        "googleAuth": MessageLookupByLibrary.simpleMessage("Вход через Google"),
         "loadingYourData": MessageLookupByLibrary.simpleMessage("Loading..."),
         "networkError": MessageLookupByLibrary.simpleMessage(
             "Server unavailable, please check your internet connection"),
         "no": MessageLookupByLibrary.simpleMessage("No"),
         "notFound": MessageLookupByLibrary.simpleMessage("Item not found"),
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
-        "register": MessageLookupByLibrary.simpleMessage("Register")
+        "register": MessageLookupByLibrary.simpleMessage("Регистрация")
       };
 }
